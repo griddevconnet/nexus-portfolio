@@ -63,8 +63,23 @@
   .status-blink { width: 5px; height: 5px; background: #00e676; border-radius: 50%; animation: blink 1.4s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-  .header-right { display: flex; align-items: center; }
-  .header-badge { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--border); padding: 0.22rem 0.55rem; border-radius: 2rem; white-space: nowrap; }
+  .header-right { display: flex; align-items: center; gap: 0.5rem; }
+  .header-badge { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--border); padding: 0.22rem 0.55rem; border-radius: 2rem; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+  .header-badge:hover { background: rgba(0,245,212,0.08); border-color: var(--accent); }
+  
+  /* Recent Chats Dropdown */
+  .recent-dropdown { position: relative; display: inline-block; }
+  .dropdown-content { position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; min-width: 280px; max-width: 350px; max-height: 400px; overflow-y: auto; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.4); backdrop-filter: blur(12px); display: none; }
+  .dropdown-content.show { display: block; }
+  .dropdown-header { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+  .dropdown-list { padding: 0.5rem 0; }
+  .dropdown-item { padding: 0.75rem 1rem; cursor: pointer; transition: background 0.2s; border-left: 3px solid transparent; }
+  .dropdown-item:hover { background: rgba(0,245,212,0.05); border-left-color: var(--accent); }
+  .dropdown-item.active { background: rgba(0,245,212,0.08); border-left-color: var(--accent); }
+  .dropdown-item-name { font-size: 0.7rem; color: var(--text); font-weight: 600; margin-bottom: 0.2rem; }
+  .dropdown-item-preview { font-size: 0.6rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 0.2rem; }
+  .dropdown-item-time { font-size: 0.55rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .dropdown-empty { padding: 1.5rem; text-align: center; color: var(--muted); font-size: 0.65rem; }
 
   .messages-wrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1.5rem 0; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 1.2rem; }
   .messages-wrap::-webkit-scrollbar { width: 4px; }
@@ -140,7 +155,6 @@
     .app { padding: 0 0.75rem; }
     .back-btn span { display: none; }
     .divider-v { display: none; }
-    .header-badge { display: none; }
     .bubble { font-size: 0.72rem; padding: 0.65rem 0.85rem; }
     .msg-body { max-width: 82%; }
     .greeting-card { padding: 1rem 1.1rem; }
@@ -179,7 +193,19 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="header-badge">// Direct Line</div>
+      <div class="recent-dropdown" id="recentDropdown">
+        <button id="recentChatsBtn" class="header-badge">// Recent Chats</button>
+        <div class="dropdown-content" id="dropdownContent">
+          <div class="dropdown-header">
+            <span>Recent Conversations</span>
+            <button id="clearHistoryBtn" style="background:none;border:none;color:var(--accent3);font-size:0.55rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;">Clear All</button>
+          </div>
+          <div class="dropdown-list" id="recentChatsList">
+            <div class="dropdown-empty">No recent conversations</div>
+          </div>
+        </div>
+      </div>
+      <button id="newChatBtn" class="header-badge">// New Chat</button>
     </div>
   </header>
 
@@ -195,6 +221,21 @@
       <button class="qr-chip" onclick="sendQuickReply(this)">🤝 Let us collaborate</button>
       <button class="qr-chip" onclick="sendQuickReply(this)">💼 Hire you for freelance</button>
       <button class="qr-chip" onclick="sendQuickReply(this)">👋 Just saying hi!</button>
+    </div>
+  </div>
+
+  <!-- FIX #9: Name/email form — shown only before first message -->
+  <div id="introForm" style="padding:.8rem 0 0;border-top:1px solid var(--border);">
+    <div style="font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:.6rem;">
+      // Let Desmond know who you are
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
+      <input id="clientName" type="text" placeholder="Your name" maxlength="60"
+        style="flex:1;background:rgba(10,15,26,.8);border:1px solid var(--border);border-radius:6px;padding:.55rem .75rem;color:var(--text);font-family:'Space Mono',monospace;font-size:.68rem;outline:none;transition:border-color .2s;"
+        onfocus="this.style.borderColor='rgba(0,245,212,.35)'" onblur="this.style.borderColor='rgba(0,245,212,0.1)'" />
+      <input id="clientEmail" type="email" placeholder="Email (optional)" maxlength="120"
+        style="flex:1;background:rgba(10,15,26,.8);border:1px solid var(--border);border-radius:6px;padding:.55rem .75rem;color:var(--text);font-family:'Space Mono',monospace;font-size:.68rem;outline:none;transition:border-color .2s;"
+        onfocus="this.style.borderColor='rgba(0,245,212,.35)'" onblur="this.style.borderColor='rgba(0,245,212,0.1)'" />
     </div>
   </div>
 
@@ -221,6 +262,7 @@
 <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf,.doc,.docx">
 
 <script src="router.js"></script>
+<script src="api-client.js"></script>
 <script>
 /* ── PARTICLES ── */
 const canvas = document.getElementById('particles');
@@ -283,19 +325,321 @@ const qrContainer = document.getElementById('quickReplies');
 
 sendBtn.addEventListener('click', sendMessage);
 
-function sendMessage() {
+let currentConversationId = null;
+let replyPollInterval = null;
+
+const STORAGE_KEY = 'nexus_chat_session_v1';
+const RECENT_CHATS_KEY = 'nexus_recent_chats_v1';
+
+function saveChatSession(payload) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch(e) {}
+}
+
+function loadChatSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function clearChatSession() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+}
+
+function saveRecentChats(chats) {
+  try { localStorage.setItem(RECENT_CHATS_KEY, JSON.stringify(chats)); } catch(e) {}
+}
+
+function loadRecentChats() {
+  try {
+    const raw = localStorage.getItem(RECENT_CHATS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+function clearRecentChats() {
+  try { localStorage.removeItem(RECENT_CHATS_KEY); } catch(e) {}
+}
+
+function addOrUpdateRecentChat(conversationId, clientName, lastMessage, timestamp) {
+  const chats = loadRecentChats();
+  const existingIndex = chats.findIndex(chat => chat.conversation_id === conversationId);
+  
+  const chatData = {
+    conversation_id: conversationId,
+    client_name: clientName,
+    last_message: lastMessage,
+    timestamp: timestamp || Date.now(),
+    last_active: Date.now()
+  };
+  
+  if (existingIndex >= 0) {
+    chats[existingIndex] = chatData;
+  } else {
+    chats.unshift(chatData);
+  }
+  
+  // Keep only the 10 most recent chats
+  const sortedChats = chats.sort((a, b) => b.last_active - a.last_active).slice(0, 10);
+  saveRecentChats(sortedChats);
+  updateRecentChatsDropdown();
+}
+
+function updateRecentChatsDropdown() {
+  const dropdownList = document.getElementById('recentChatsList');
+  const chats = loadRecentChats();
+  
+  if (chats.length === 0) {
+    dropdownList.innerHTML = '<div class="dropdown-empty">No recent conversations</div>';
+    return;
+  }
+  
+  dropdownList.innerHTML = '';
+  chats.forEach(chat => {
+    const item = document.createElement('div');
+    item.className = 'dropdown-item';
+    if (chat.conversation_id === currentConversationId) {
+      item.classList.add('active');
+    }
+    
+    const timeAgo = getTimeAgo(chat.last_active);
+    const preview = chat.last_message.length > 50 ? chat.last_message.substring(0, 50) + '...' : chat.last_message;
+    
+    item.innerHTML = `
+      <div class="dropdown-item-name">${chat.client_name}</div>
+      <div class="dropdown-item-preview">${preview}</div>
+      <div class="dropdown-item-time">${timeAgo}</div>
+    `;
+    
+    item.addEventListener('click', () => loadConversation(chat.conversation_id));
+    dropdownList.appendChild(item);
+  });
+}
+
+function getTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  return new Date(timestamp).toLocaleDateString();
+}
+
+async function loadConversation(conversationId) {
+  // Stop current polling
+  if (replyPollInterval) {
+    clearInterval(replyPollInterval);
+    replyPollInterval = null;
+  }
+  
+  // Clear current messages
+  const messages = wrap.querySelectorAll('.msg-row, .typing-row');
+  messages.forEach(msg => msg.remove());
+  
+  // Show greeting again
+  const greeting = wrap.querySelector('.greeting-card');
+  const quickReplies = wrap.querySelector('.quick-replies');
+  if (greeting) greeting.style.display = 'block';
+  if (quickReplies) quickReplies.style.display = 'flex';
+  
+  currentConversationId = conversationId;
+  
+  // Hide intro form
+  const introForm = document.getElementById('introForm');
+  if (introForm) introForm.style.display = 'none';
+  
+  try {
+    const msgs = await nexusAPI.getMessages(conversationId);
+    if (Array.isArray(msgs)) {
+      // Hide greeting after loading messages
+      if (greeting) greeting.style.display = 'none';
+      if (quickReplies) quickReplies.style.display = 'none';
+      
+      msgs.forEach(m => {
+        const direction = (m.sender === 'developer' || m.sender === 'dev') ? 'incoming' : 'outgoing';
+        const text = m.content || m.text || '';
+        if (text) appendMessage(text, direction);
+      });
+    }
+  } catch(e) {
+    console.error('Failed to load conversation:', e);
+    // If loading fails, remove from recent chats
+    const chats = loadRecentChats();
+    const filteredChats = chats.filter(chat => chat.conversation_id !== conversationId);
+    saveRecentChats(filteredChats);
+    updateRecentChatsDropdown();
+    return;
+  }
+  
+  startReplyPolling();
+  updateRecentChatsDropdown();
+  closeDropdown();
+}
+
+async function resumeConversationIfPossible() {
+  const session = loadChatSession();
+  if (!session || !session.conversation_id) {
+    // Try to load the most recent conversation from recent chats
+    const recentChats = loadRecentChats();
+    if (recentChats.length > 0) {
+      const mostRecent = recentChats[0];
+      await loadConversation(mostRecent.conversation_id);
+      
+      // Update form fields with client info
+      const nameInput = document.getElementById('clientName');
+      const emailInput = document.getElementById('clientEmail');
+      if (nameInput && mostRecent.client_name) nameInput.value = mostRecent.client_name;
+      
+      return;
+    }
+    return;
+  }
+
+  currentConversationId = session.conversation_id;
+  const introForm = document.getElementById('introForm');
+  if (introForm) introForm.style.display = 'none';
+
+  const nameInput = document.getElementById('clientName');
+  const emailInput = document.getElementById('clientEmail');
+  if (nameInput && session.client_name) nameInput.value = session.client_name;
+  if (emailInput && session.client_email) emailInput.value = session.client_email;
+
+  try {
+    const msgs = await nexusAPI.getMessages(currentConversationId);
+    if (Array.isArray(msgs)) {
+      // Hide greeting and quick replies when loading existing conversation
+      const greeting = wrap.querySelector('.greeting-card');
+      const quickReplies = wrap.querySelector('.quick-replies');
+      if (greeting) greeting.style.display = 'none';
+      if (quickReplies) quickReplies.style.display = 'none';
+      
+      msgs.forEach(m => {
+        const direction = (m.sender === 'developer' || m.sender === 'dev') ? 'incoming' : 'outgoing';
+        const text = m.content || m.text || '';
+        if (text) {
+          appendMessage(text, direction);
+          // Update recent chats with message content
+          if (direction === 'outgoing') {
+            addOrUpdateRecentChat(currentConversationId, session.client_name || 'Anonymous', text);
+          }
+        }
+      });
+    }
+  } catch(e) {
+    // If resume fails (deleted/invalid), clear local session
+    currentConversationId = null;
+    clearChatSession();
+  }
+
+  startReplyPolling();
+}
+
+// FIX #8 + #9: Full API integration — name/email, real backend, poll for reply
+async function sendMessage() {
   const text = msgInput.value.trim();
   if (!text) return;
+
   qrContainer.style.display = 'none';
   appendMessage(text, 'outgoing');
-  msgInput.value = ''; msgInput.style.height='auto'; charCount.textContent='0 / 1000';
-  setTimeout(showTyping, 600);
+  msgInput.value = '';
+  msgInput.style.height = 'auto';
+  charCount.textContent = '0 / 1000';
+  showTyping();
+
+  try {
+    if (currentConversationId) {
+      await nexusAPI.sendMessage(currentConversationId, text);
+      // Update recent chats with new message
+      const session = loadChatSession();
+      const clientName = session?.client_name || 'Anonymous';
+      addOrUpdateRecentChat(currentConversationId, clientName, text);
+    } else {
+      // FIX #9: Read name + email from intro form
+      const clientName = (document.getElementById('clientName').value.trim()) || 'Anonymous';
+      const clientEmail = document.getElementById('clientEmail').value.trim();
+
+      // Auto-detect tag from message content
+      const lower = text.toLowerCase();
+      const tag = lower.includes('hire') || lower.includes('contract') ? 'hire'
+                : lower.includes('collab') || lower.includes('together') ? 'collab'
+                : lower.includes('project') ? 'project' : 'greeting';
+
+      const response = await nexusAPI.startConversation(clientName, clientEmail, text, tag);
+      currentConversationId = response.conversation_id;
+
+      saveChatSession({
+        conversation_id: currentConversationId,
+        client_name: clientName,
+        client_email: clientEmail,
+      });
+      
+      // Add to recent chats
+      addOrUpdateRecentChat(currentConversationId, clientName, text);
+
+      // Hide the intro form smoothly after first send
+      const introForm = document.getElementById('introForm');
+      if (introForm) {
+        introForm.style.transition = 'opacity .4s ease';
+        introForm.style.opacity = '0';
+        setTimeout(() => { introForm.style.display = 'none'; }, 400);
+      }
+
+      // Start long-lived polling for developer replies
+      startReplyPolling();
+    }
+  } catch (error) {
+    console.error('Failed to send message:', error);
+    // API failed — show a local fallback so the UI isn't silent
+    if (typingEl && typingEl.parentNode) { typingEl.remove(); typingEl = null; }
+    setTimeout(() => {
+      appendMessage("Thanks for reaching out! I will get back to you shortly.", 'incoming');
+    }, 1800);
+  }
+}
+
+// FIX #8: Poll for the real backend auto-reply — stops when one arrives
+function startReplyPolling() {
+  if (replyPollInterval) return;
+  replyPollInterval = setInterval(async () => {
+    if (!currentConversationId) return;
+    try {
+      const msgs = await nexusAPI.getMessages(currentConversationId);
+      if (!Array.isArray(msgs)) return;
+
+      const existingTexts = new Set(
+        Array.from(wrap.querySelectorAll('.bubble.incoming')).map(el => el.textContent)
+      );
+
+      const devMsgs = msgs.filter(m => m.sender === 'developer' || m.sender === 'dev');
+      const newDevMsgs = devMsgs.filter(m => {
+        const t = m.content || m.text || '';
+        return t && !existingTexts.has(t);
+      });
+
+      if (newDevMsgs.length > 0) {
+        if (typingEl && typingEl.parentNode) { typingEl.remove(); typingEl = null; }
+        newDevMsgs.forEach(m => appendMessage(m.content || m.text, 'incoming'));
+      }
+    } catch(e) { /* keep polling */ }
+  }, 3000);
+
+  // Stop after 2 minutes
+  setTimeout(() => { if (replyPollInterval) { clearInterval(replyPollInterval); replyPollInterval = null; } }, 120000);
 }
 
 function sendQuickReply(btn) {
-  qrContainer.style.display='none';
-  appendMessage(btn.textContent.trim(), 'outgoing');
-  setTimeout(showTyping, 600);
+  // FIX #7: Route through real sendMessage so Desmond sees it on the dashboard
+  msgInput.value = btn.textContent.trim();
+  sendMessage();
 }
 
 function appendMessage(text, direction) {
@@ -318,21 +662,17 @@ function appendMessage(text, direction) {
 
 let typingEl=null;
 function showTyping() {
+  // Remove existing indicator if present
+  if (typingEl && typingEl.parentNode) typingEl.remove();
   typingEl=document.createElement('div'); typingEl.className='typing-row';
   typingEl.innerHTML=`<div class="msg-avatar">DA</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
   wrap.appendChild(typingEl); scrollBottom();
-  setTimeout(()=>{if(typingEl&&typingEl.parentNode){typingEl.remove();typingEl=null;}showAutoReply();}, 2000+Math.random()*2000);
+  // Auto-remove after 8s if no real reply comes — polling will handle actual reply
+  setTimeout(()=>{if(typingEl&&typingEl.parentNode){typingEl.remove();typingEl=null;}}, 8000);
 }
 
-const autoReplies = [
-  "Thanks for reaching out! I will get back to you shortly.",
-  "Got your message! I usually respond within a few hours.",
-  "Appreciate you reaching out. I will review this and respond soon!",
-  "Message received! Looking forward to chatting with you.",
-  "Hey, thanks for connecting! I will reply as soon as I am available."
-];
-let replyIdx=0;
-function showAutoReply() { appendMessage(autoReplies[replyIdx++%autoReplies.length],'incoming'); }
+// Auto-replies handled by backend polling (see startReplyPolling above)
+// Local fallback in showLocalFallbackReply() used only if API call fails
 
 /* ── FILE ATTACH ── */
 const fileInput = document.getElementById('fileInput');
@@ -347,8 +687,81 @@ fileInput.addEventListener('change', ()=>{
 /* ── BACK BUTTON ── */
 document.getElementById('backBtn').addEventListener('click', e=>{e.preventDefault();window.location.href='index.html';});
 
+/* ── RECENT CHATS DROPDOWN ── */
+function toggleDropdown() {
+  const dropdown = document.getElementById('dropdownContent');
+  dropdown.classList.toggle('show');
+}
+
+function closeDropdown() {
+  const dropdown = document.getElementById('dropdownContent');
+  dropdown.classList.remove('show');
+}
+
+// Toggle dropdown on button click
+document.getElementById('recentChatsBtn').addEventListener('click', toggleDropdown);
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  const dropdown = document.getElementById('recentDropdown');
+  if (!dropdown.contains(e.target)) {
+    closeDropdown();
+  }
+});
+
+// Clear all recent chats
+document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+  if (confirm('Clear all recent conversations? This cannot be undone.')) {
+    clearRecentChats();
+    updateRecentChatsDropdown();
+    closeDropdown();
+  }
+});
+
+// New Chat button
+document.getElementById('newChatBtn').addEventListener('click', () => {
+  // Stop current polling
+  if (replyPollInterval) {
+    clearInterval(replyPollInterval);
+    replyPollInterval = null;
+  }
+  
+  // Clear current conversation
+  currentConversationId = null;
+  clearChatSession();
+  
+  // Clear messages
+  const messages = wrap.querySelectorAll('.msg-row, .typing-row');
+  messages.forEach(msg => msg.remove());
+  
+  // Show greeting and quick replies
+  const greeting = wrap.querySelector('.greeting-card');
+  const quickReplies = wrap.querySelector('.quick-replies');
+  const introForm = document.getElementById('introForm');
+  
+  if (greeting) greeting.style.display = 'block';
+  if (quickReplies) quickReplies.style.display = 'flex';
+  if (introForm) introForm.style.display = 'block';
+  
+  // Clear form fields
+  const nameInput = document.getElementById('clientName');
+  const emailInput = document.getElementById('clientEmail');
+  if (nameInput) nameInput.value = '';
+  if (emailInput) emailInput.value = '';
+  
+  // Update dropdown to show no active conversation
+  updateRecentChatsDropdown();
+  closeDropdown();
+});
+
+// Initialize dropdown on page load
+updateRecentChatsDropdown();
+
 function scrollBottom(){wrap.scrollTop=wrap.scrollHeight;}
 scrollBottom();
+
+// Initialize: load recent conversations and attempt to resume
+resumeConversationIfPossible();
 </script>
 </body>
 </html>
