@@ -624,9 +624,9 @@ window.addEventListener('resize', () => { resize(); initParticles(); });
 
 function initParticles() {
   particles = [];
-  const count = Math.min(Math.floor(W * H / 14000), 70);
+  const count = Math.min(Math.floor(W * H / 20000), 30); // Reduced particle count
   for (let i = 0; i < count; i++) {
-    particles.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.2+0.3, dx: (Math.random()-.5)*.3, dy: (Math.random()-.5)*.3, o: Math.random()*.5+0.1 });
+    particles.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.2+0.3, dx: (Math.random()-.5)*.2, dy: (Math.random()-.5)*.2, o: Math.random()*.3+0.05 });
   }
 }
 initParticles();
@@ -640,10 +640,15 @@ function drawParticles() {
     if (p.x<0||p.x>W) p.dx*=-1;
     if (p.y<0||p.y>H) p.dy*=-1;
   });
-  for (let i=0;i<particles.length;i++) for (let j=i+1;j<particles.length;j++) {
-    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-    const d=Math.sqrt(dx*dx+dy*dy);
-    if (d<120) { ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.strokeStyle=`rgba(0,245,212,${.06*(1-d/120)})`; ctx.lineWidth=.5; ctx.stroke(); }
+  // Only draw connections for nearby particles (optimized)
+  for (let i=0;i<particles.length;i++) {
+    for (let j=i+1;j<particles.length;j++) {
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if (d<80) { // Reduced connection distance
+        ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.strokeStyle=`rgba(0,245,212,${.04*(1-d/80)})`; ctx.lineWidth=.3; ctx.stroke(); 
+      }
+    }
   }
   requestAnimationFrame(drawParticles);
 }
