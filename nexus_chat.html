@@ -23,610 +23,131 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; overflow: hidden; }
 
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    overflow: hidden;
-  }
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-  /* ── Particle canvas ── */
-  #particles {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* ── Ambient glows ── */
-  .glow-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    pointer-events: none;
-    z-index: 0;
-  }
+  .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0; }
   .glow-orb.teal  { width: 500px; height: 500px; background: rgba(0,245,212,0.05); top: -150px; right: -100px; }
   .glow-orb.purple{ width: 400px; height: 400px; background: rgba(123,47,255,0.07); bottom: -100px; left: -100px; }
 
-  /* ── Scanline overlay ── */
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.06) 2px,
-      rgba(0,0,0,0.06) 4px
-    );
-    pointer-events: none;
-    z-index: 1;
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+    pointer-events: none; z-index: 1;
   }
 
-  /* ── Custom cursor ── */
-  .cursor {
-    position: fixed;
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: width .2s, height .2s;
-    mix-blend-mode: screen;
-    box-shadow: 0 0 10px var(--accent);
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 28px; height: 28px;
-    border: 1px solid rgba(0,245,212,0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: all .12s ease;
-  }
+  /* ── CURSOR FIX: no mix-blend-mode, solid visible glow ── */
+  .cursor { position: fixed; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); box-shadow: 0 0 12px var(--accent), 0 0 4px var(--accent); }
+  .cursor-ring { position: fixed; width: 28px; height: 28px; border: 1.5px solid rgba(0,245,212,0.65); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .15s ease, height .15s ease, border-color .15s ease; }
   @media (hover: none) { .cursor, .cursor-ring { display: none; } }
 
-  /* ════════════════════════════════════
-     LAYOUT
-  ════════════════════════════════════ */
-  .app {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
+  .app { position: relative; z-index: 2; display: flex; flex-direction: column; height: 100dvh; max-width: 900px; margin: 0 auto; padding: 0 1rem; }
 
-  /* ── Header ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .header-left { display: flex; align-items: center; gap: 0.75rem; }
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .back-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-    cursor: none;
-  }
+  .back-btn { display: flex; align-items: center; gap: 0.4rem; color: var(--muted); text-decoration: none; font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; transition: color 0.2s; cursor: none; }
   .back-btn:hover { color: var(--accent); }
   .back-btn svg { width: 14px; height: 14px; }
+  .divider-v { width: 1px; height: 20px; background: var(--border); }
 
-  .divider-v {
-    width: 1px;
-    height: 20px;
-    background: var(--border);
-  }
+  .agent-info { display: flex; align-items: center; gap: 0.6rem; }
+  .avatar-wrap { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.85rem; color: #050810; position: relative; z-index: 1; }
+  .avatar-ring { position: absolute; inset: -3px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0.5; animation: pulseRing 2s ease-in-out infinite; }
+  @keyframes pulseRing { 0%,100%{transform:scale(1);opacity:.5} 50%{transform:scale(1.15);opacity:.1} }
+  .online-dot { position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; background: #00e676; border-radius: 50%; border: 2px solid var(--bg); z-index: 2; }
+  .agent-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--text); line-height: 1; margin-bottom: 2px; }
+  .agent-status { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: #00e676; display: flex; align-items: center; gap: 4px; }
+  .status-blink { width: 5px; height: 5px; background: #00e676; border-radius: 50%; animation: blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-  .agent-info {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
+  .header-right { display: flex; align-items: center; }
+  .header-badge { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--border); padding: 0.22rem 0.55rem; border-radius: 2rem; white-space: nowrap; }
 
-  .avatar-wrap {
-    position: relative;
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 0.85rem;
-    color: #050810;
-    position: relative;
-    z-index: 1;
-  }
-
-  .avatar-ring {
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    border: 1px solid var(--accent);
-    opacity: 0.5;
-    animation: pulseRing 2s ease-in-out infinite;
-  }
-  @keyframes pulseRing {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50%       { transform: scale(1.15); opacity: 0.1; }
-  }
-
-  .online-dot {
-    position: absolute;
-    bottom: 0; right: 0;
-    width: 9px; height: 9px;
-    background: #00e676;
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-    z-index: 2;
-  }
-
-  .agent-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-
-  .agent-status {
-    font-size: 0.6rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #00e676;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .status-blink {
-    width: 5px; height: 5px;
-    background: #00e676;
-    border-radius: 50%;
-    animation: blink 1.4s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.2; }
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .header-badge {
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid var(--border);
-    padding: 0.22rem 0.55rem;
-    border-radius: 2rem;
-    white-space: nowrap;
-  }
-
-  /* ── Messages area ── */
-  .messages-wrap {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1.5rem 0;
-    scroll-behavior: smooth;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-
-  /* Scrollbar */
+  .messages-wrap { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 1.5rem 0; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 1.2rem; }
   .messages-wrap::-webkit-scrollbar { width: 4px; }
-  .messages-wrap::-webkit-scrollbar-track { background: transparent; }
   .messages-wrap::-webkit-scrollbar-thumb { background: rgba(0,245,212,0.2); border-radius: 2px; }
 
-  /* ── Date divider ── */
-  .date-divider {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin: 0.5rem 0;
-  }
-  .date-divider::before,
-  .date-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-  .date-divider span {
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: nowrap;
-  }
+  .date-divider { display: flex; align-items: center; gap: 0.8rem; margin: 0.5rem 0; }
+  .date-divider::before, .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .date-divider span { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
 
-  /* ── Greeting card ── */
-  .greeting-card {
-    background: rgba(0,245,212,0.03);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    padding: 1.2rem 1.4rem;
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-    animation: slideIn 0.5s ease both;
-  }
-  .greeting-card p {
-    font-size: 0.76rem;
-    line-height: 1.9;
-    color: rgba(232,234,240,0.75);
-  }
-  .greeting-card .g-name {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    display: block;
-  }
-  .greeting-card .g-name span {
-    background: linear-gradient(120deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+  .greeting-card { background: rgba(0,245,212,0.03); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 1.2rem 1.4rem; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); animation: slideIn 0.5s ease both; }
+  .greeting-card p { font-size: 0.76rem; line-height: 1.9; color: rgba(232,234,240,0.75); }
+  .greeting-card .g-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 0.5rem; display: block; }
+  .greeting-card .g-name span { background: linear-gradient(120deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-  /* ── Quick reply chips ── */
-  .quick-replies {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    animation: slideIn 0.5s 0.2s ease both;
-  }
-  .qr-chip {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    border: 1px solid rgba(0,245,212,0.25);
-    padding: 0.35rem 0.75rem;
-    border-radius: 2rem;
-    cursor: none;
-    transition: all 0.2s;
-    background: transparent;
-    white-space: nowrap;
-  }
-  .qr-chip:hover {
-    background: rgba(0,245,212,0.08);
-    border-color: var(--accent);
-    transform: translateY(-2px);
-  }
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 0.5rem; animation: slideIn 0.5s 0.2s ease both; }
+  .qr-chip { font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--accent); border: 1px solid rgba(0,245,212,0.25); padding: 0.35rem 0.75rem; border-radius: 2rem; cursor: none; transition: all 0.2s; background: transparent; white-space: nowrap; }
+  .qr-chip:hover { background: rgba(0,245,212,0.08); border-color: var(--accent); transform: translateY(-2px); }
 
-  /* ── Message bubble ── */
-  .msg-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.6rem;
-    animation: slideIn 0.35s ease both;
-  }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .msg-row { display: flex; align-items: flex-end; gap: 0.6rem; animation: slideIn 0.35s ease both; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .msg-row.outgoing { flex-direction: row-reverse; }
 
-  .msg-row.outgoing {
-    flex-direction: row-reverse;
-  }
+  .msg-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.65rem; color: #050810; flex-shrink: 0; align-self: flex-end; }
+  .msg-avatar.you { background: linear-gradient(135deg, var(--accent2), var(--accent3)); color: #fff; }
 
-  .msg-avatar {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 0.65rem;
-    color: #050810;
-    flex-shrink: 0;
-    align-self: flex-end;
-  }
-  .msg-avatar.you {
-    background: linear-gradient(135deg, var(--accent2), var(--accent3));
-  }
+  .msg-body { max-width: 70%; display: flex; flex-direction: column; gap: 0.25rem; }
+  .msg-row.outgoing .msg-body { align-items: flex-end; }
+  .msg-sender { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0 0.5rem; }
 
-  .msg-body {
-    max-width: 70%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .msg-row.outgoing .msg-body {
-    align-items: flex-end;
-  }
+  .bubble { padding: 0.75rem 1rem; font-size: 0.75rem; line-height: 1.8; color: var(--text); position: relative; word-break: break-word; }
+  .bubble.incoming { background: var(--msg-in-bg); border: 1px solid var(--border2); border-radius: 0 12px 12px 12px; border-left: 2px solid rgba(123,47,255,0.4); }
+  .bubble.outgoing { background: var(--msg-out-bg); border: 1px solid var(--border); border-radius: 12px 0 12px 12px; border-right: 2px solid rgba(0,245,212,0.4); text-align: right; }
 
-  .msg-sender {
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0 0.5rem;
-  }
-
-  .bubble {
-    padding: 0.75rem 1rem;
-    font-size: 0.75rem;
-    line-height: 1.8;
-    color: var(--text);
-    position: relative;
-    word-break: break-word;
-  }
-
-  .bubble.incoming {
-    background: var(--msg-in-bg);
-    border: 1px solid var(--border2);
-    border-radius: 0 12px 12px 12px;
-    border-left: 2px solid rgba(123,47,255,0.4);
-  }
-
-  .bubble.outgoing {
-    background: var(--msg-out-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px 0 12px 12px;
-    border-right: 2px solid rgba(0,245,212,0.4);
-    text-align: right;
-  }
-
-  .msg-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0 0.5rem;
-    font-size: 0.56rem;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-  }
-  .msg-row.outgoing .msg-meta {
-    flex-direction: row-reverse;
-  }
+  .msg-meta { display: flex; align-items: center; gap: 0.4rem; padding: 0 0.5rem; font-size: 0.56rem; color: var(--muted); letter-spacing: 0.06em; }
+  .msg-row.outgoing .msg-meta { flex-direction: row-reverse; }
   .tick { color: var(--accent); font-size: 0.65rem; }
 
-  /* ── Typing indicator ── */
-  .typing-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .typing-bubble {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--msg-in-bg);
-    border: 1px solid var(--border2);
-    border-radius: 0 12px 12px 12px;
-    border-left: 2px solid rgba(123,47,255,0.4);
-    padding: 0.6rem 0.9rem;
-  }
-  .typing-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent2);
-    animation: typingBounce 1.2s ease-in-out infinite;
-  }
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes typingBounce {
-    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-    40%            { transform: translateY(-6px); opacity: 1; }
-  }
+  .typing-row { display: flex; align-items: center; gap: 0.6rem; }
+  .typing-bubble { display: flex; align-items: center; gap: 5px; background: var(--msg-in-bg); border: 1px solid var(--border2); border-radius: 0 12px 12px 12px; border-left: 2px solid rgba(123,47,255,0.4); padding: 0.6rem 0.9rem; }
+  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); animation: typingBounce 1.2s ease-in-out infinite; }
+  .typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
+  @keyframes typingBounce { 0%,80%,100%{transform:translateY(0);opacity:.4} 40%{transform:translateY(-6px);opacity:1} }
 
-  /* ── Input area ── */
-  .input-area {
-    padding: 1rem 0 1.2rem;
-    border-top: 1px solid var(--border);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
+  .input-area { padding: 1rem 0 1.2rem; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+  .input-hint { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+  .input-hint::before, .input-hint::after { content: ''; flex: 1; max-width: 80px; height: 1px; background: var(--border); }
 
-  .input-hint {
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-  .input-hint::before,
-  .input-hint::after {
-    content: '';
-    flex: 1;
-    max-width: 80px;
-    height: 1px;
-    background: var(--border);
-  }
+  .input-row { display: flex; align-items: flex-end; gap: 0.6rem; background: rgba(10,15,26,0.8); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.6rem 0.6rem 0.9rem; transition: border-color 0.2s; backdrop-filter: blur(10px); }
+  .input-row:focus-within { border-color: rgba(0,245,212,0.35); box-shadow: 0 0 0 3px rgba(0,245,212,0.04); }
 
-  .input-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 0.6rem;
-    background: rgba(10,15,26,0.8);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.6rem 0.6rem 0.6rem 0.9rem;
-    transition: border-color 0.2s;
-    backdrop-filter: blur(10px);
-  }
-  .input-row:focus-within {
-    border-color: rgba(0,245,212,0.35);
-    box-shadow: 0 0 0 3px rgba(0,245,212,0.04);
-  }
-
-  .msg-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    resize: none;
-    max-height: 140px;
-    overflow-y: auto;
-    scrollbar-width: none;
-    padding: 0;
-  }
+  .msg-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.75rem; line-height: 1.6; resize: none; max-height: 140px; overflow-y: auto; scrollbar-width: none; padding: 0; }
   .msg-input::placeholder { color: var(--muted); }
   .msg-input::-webkit-scrollbar { display: none; }
 
-  .input-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-shrink: 0;
-  }
-
-  .attach-btn {
-    width: 32px; height: 32px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    color: var(--muted);
-    cursor: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .attach-btn:hover {
-    border-color: rgba(0,245,212,0.3);
-    color: var(--accent);
-  }
+  .input-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+  .attach-btn { width: 32px; height: 32px; background: transparent; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); cursor: none; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .attach-btn:hover { border-color: rgba(0,245,212,0.3); color: var(--accent); }
   .attach-btn svg { width: 15px; height: 15px; }
 
-  .send-btn {
-    width: 36px; height: 36px;
-    background: var(--accent);
-    border: none;
-    border-radius: 4px;
-    color: #050810;
-    cursor: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-    flex-shrink: 0;
-  }
-  .send-btn:hover {
-    background: #00ffe0;
-    transform: scale(1.05);
-  }
+  .send-btn { width: 36px; height: 36px; background: var(--accent); border: none; border-radius: 4px; color: #050810; cursor: none; display: flex; align-items: center; justify-content: center; transition: all 0.2s; clip-path: polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px)); }
+  .send-btn:hover { background: #00ffe0; transform: scale(1.05); }
   .send-btn:active { transform: scale(0.95); }
   .send-btn svg { width: 15px; height: 15px; }
 
-  /* ── Info bar below input ── */
-  .info-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.57rem;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    padding: 0 0.2rem;
-  }
+  .info-bar { display: flex; align-items: center; justify-content: space-between; font-size: 0.57rem; letter-spacing: 0.08em; color: var(--muted); padding: 0 0.2rem; }
   .info-bar span { text-transform: uppercase; }
-  .char-count { color: var(--muted); }
   .char-count.near { color: var(--accent3); }
 
-  /* ── Empty state  / connection notice ── */
-  .conn-notice {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0.5rem;
-    margin: 0.5rem 0;
-  }
-  .conn-notice .dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #00e676;
-    box-shadow: 0 0 6px #00e676;
-  }
+  .conn-notice { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem; margin: 0.5rem 0; }
+  .conn-notice .dot { width: 5px; height: 5px; border-radius: 50%; background: #00e676; box-shadow: 0 0 6px #00e676; }
 
-  /* ════════════════════════════
-     MOBILE TWEAKS
-  ════════════════════════════ */
   @media (max-width: 600px) {
     .app { padding: 0 0.75rem; }
-
-    header { padding: 0.75rem 0; }
-
     .back-btn span { display: none; }
     .divider-v { display: none; }
-
     .header-badge { display: none; }
-
     .bubble { font-size: 0.72rem; padding: 0.65rem 0.85rem; }
     .msg-body { max-width: 82%; }
-
     .greeting-card { padding: 1rem 1.1rem; }
     .greeting-card p { font-size: 0.72rem; }
-
     .qr-chip { font-size: 0.6rem; padding: 0.3rem 0.65rem; }
-
-    .agent-name { font-size: 0.8rem; }
-    .msg-input { font-size: 0.72rem; }
   }
-
-  @media (max-width: 380px) {
-    .msg-body { max-width: 88%; }
-  }
+  @media (max-width: 380px) { .msg-body { max-width: 88%; } }
 </style>
 </head>
 <body>
@@ -638,14 +159,10 @@
 <div class="cursor-ring" id="cursorRing"></div>
 
 <div class="app">
-
-  <!-- ── HEADER ── -->
   <header>
     <div class="header-left">
       <a href="index.html" class="back-btn" id="backBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
         <span>Portfolio</span>
       </a>
       <div class="divider-v"></div>
@@ -657,10 +174,7 @@
         </div>
         <div>
           <div class="agent-name">Desmond Amedzie</div>
-          <div class="agent-status">
-            <span class="status-blink"></span>
-            Active now
-          </div>
+          <div class="agent-status"><span class="status-blink"></span>Active now</div>
         </div>
       </div>
     </div>
@@ -669,59 +183,31 @@
     </div>
   </header>
 
-  <!-- ── MESSAGES ── -->
   <div class="messages-wrap" id="messagesWrap">
-
-    <div class="date-divider">
-      <span id="todayLabel">Today</span>
-    </div>
-
-    <div class="conn-notice">
-      <div class="dot"></div>
-      End-to-end encrypted · Messages go directly to Desmond
-    </div>
-
-    <!-- Greeting card -->
+    <div class="date-divider"><span id="todayLabel">Today</span></div>
+    <div class="conn-notice"><div class="dot"></div>End-to-end encrypted · Messages go directly to Desmond</div>
     <div class="greeting-card">
-      <span class="g-name">Hey, I'm <span>Desmond</span> 👋</span>
-      <p>
-        Welcome to my direct line. Whether you have a project idea, a collaboration proposal,
-        or just want to say hello — drop me a message with your name and I'll get back to you as soon as I can.
-      </p>
+      <span class="g-name">Hey, I am <span>Desmond</span> 👋</span>
+      <p>Welcome to my direct line. Whether you have a project idea, a collaboration proposal, or just want to say hello — drop me a message and I will get back to you as soon as I can.</p>
     </div>
-
-    <!-- Quick reply suggestions -->
     <div class="quick-replies" id="quickReplies">
       <button class="qr-chip" onclick="sendQuickReply(this)">💡 I have a project idea</button>
-      <button class="qr-chip" onclick="sendQuickReply(this)">🤝 Let's collaborate</button>
+      <button class="qr-chip" onclick="sendQuickReply(this)">🤝 Let us collaborate</button>
       <button class="qr-chip" onclick="sendQuickReply(this)">💼 Hire you for freelance</button>
       <button class="qr-chip" onclick="sendQuickReply(this)">👋 Just saying hi!</button>
     </div>
-
   </div>
 
-  <!-- ── INPUT ── -->
   <div class="input-area">
     <div class="input-hint">Type a message</div>
     <div class="input-row">
-      <textarea
-        class="msg-input"
-        id="msgInput"
-        placeholder="Say something..."
-        rows="1"
-        maxlength="1000"
-      ></textarea>
+      <textarea class="msg-input" id="msgInput" placeholder="Say something..." rows="1" maxlength="1000"></textarea>
       <div class="input-actions">
         <button class="attach-btn" title="Attach file" id="attachBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
         </button>
-        <button class="send-btn" id="sendBtn" title="Send message">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
+        <button class="send-btn" id="sendBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
@@ -730,122 +216,57 @@
       <span class="char-count" id="charCount">0 / 1000</span>
     </div>
   </div>
-
 </div>
 
-<!-- Hidden file input -->
 <input type="file" id="fileInput" style="display:none" accept="image/*,.pdf,.doc,.docx">
 
 <script src="router.js"></script>
 <script>
-/* ════════════════════════════════════
-   PARTICLE FIELD
-════════════════════════════════════ */
+/* ── PARTICLES ── */
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-
-function resize() {
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
+let W, H, pts = [];
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize();
-window.addEventListener('resize', () => { resize(); init(); });
-
-function init() {
-  particles = [];
-  const count = Math.min(Math.floor(W * H / 14000), 70);
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.2 + 0.3,
-      dx: (Math.random() - 0.5) * 0.3,
-      dy: (Math.random() - 0.5) * 0.3,
-      o: Math.random() * 0.5 + 0.1
-    });
-  }
+window.addEventListener('resize', () => { resize(); initPts(); });
+function initPts() {
+  pts = [];
+  const n = Math.min(Math.floor(W*H/30000), 22);
+  for (let i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.3,dx:(Math.random()-.5)*.2,dy:(Math.random()-.5)*.2,o:Math.random()*.35+.1});
 }
-init();
-
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0,245,212,${p.o})`;
-    ctx.fill();
-    p.x += p.dx; p.y += p.dy;
-    if (p.x < 0 || p.x > W) p.dx *= -1;
-    if (p.y < 0 || p.y > H) p.dy *= -1;
-  });
-
-  // draw faint connection lines
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 120) {
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.strokeStyle = `rgba(0,245,212,${0.06 * (1 - dist/120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      }
-    }
-  }
-  requestAnimationFrame(draw);
+initPts();
+function drawPts() {
+  ctx.clearRect(0,0,W,H);
+  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){ctx.beginPath();ctx.strokeStyle=`rgba(0,245,212,${.04*(1-d/90)})`;ctx.lineWidth=.4;ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}}
+  pts.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>W)p.dx*=-1;if(p.y<0||p.y>H)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(0,245,212,${p.o})`;ctx.fill();});
+  requestAnimationFrame(drawPts);
 }
-draw();
+drawPts();
 
-/* ════════════════════════════════════
-   CUSTOM CURSOR
-════════════════════════════════════ */
+/* ── CURSOR FIX ── */
 const cursorEl  = document.getElementById('cursor');
 const cursorRing = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-function animateCursor() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  cursorEl.style.left  = mx + 'px';
-  cursorEl.style.top   = my + 'px';
-  cursorRing.style.left = rx + 'px';
-  cursorRing.style.top  = ry + 'px';
-  requestAnimationFrame(animateCursor);
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animCursor() {
+  rx+=(mx-rx)*.1; ry+=(my-ry)*.1;
+  cursorEl.style.left=mx+'px'; cursorEl.style.top=my+'px';
+  cursorRing.style.left=rx+'px'; cursorRing.style.top=ry+'px';
+  requestAnimationFrame(animCursor);
 }
-animateCursor();
+animCursor();
 
 document.querySelectorAll('button, a, textarea, .qr-chip').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursorRing.style.width  = '44px';
-    cursorRing.style.height = '44px';
-    cursorRing.style.borderColor = 'rgba(0,245,212,0.6)';
-  });
-  el.addEventListener('mouseleave', () => {
-    cursorRing.style.width  = '28px';
-    cursorRing.style.height = '28px';
-    cursorRing.style.borderColor = 'rgba(0,245,212,0.5)';
-  });
+  el.addEventListener('mouseenter', () => { cursorRing.style.width='44px'; cursorRing.style.height='44px'; cursorRing.style.borderColor='rgba(0,245,212,0.9)'; });
+  el.addEventListener('mouseleave', () => { cursorRing.style.width='28px'; cursorRing.style.height='28px'; cursorRing.style.borderColor='rgba(0,245,212,0.65)'; });
 });
 
-/* ════════════════════════════════════
-   SET TODAY'S DATE
-════════════════════════════════════ */
-const now = new Date();
-document.getElementById('todayLabel').textContent =
-  now.toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' });
+/* ── DATE ── */
+document.getElementById('todayLabel').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
 
-/* ════════════════════════════════════
-   AUTO-GROW TEXTAREA
-════════════════════════════════════ */
+/* ── TEXTAREA AUTO-GROW ── */
 const msgInput = document.getElementById('msgInput');
 const charCount = document.getElementById('charCount');
-
 msgInput.addEventListener('input', () => {
   msgInput.style.height = 'auto';
   msgInput.style.height = Math.min(msgInput.scrollHeight, 140) + 'px';
@@ -853,17 +274,9 @@ msgInput.addEventListener('input', () => {
   charCount.textContent = `${len} / 1000`;
   charCount.classList.toggle('near', len > 800);
 });
+msgInput.addEventListener('keydown', e => { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
-msgInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-/* ════════════════════════════════════
-   SEND MESSAGE
-════════════════════════════════════ */
+/* ── MESSAGING ── */
 const wrap = document.getElementById('messagesWrap');
 const sendBtn = document.getElementById('sendBtn');
 const qrContainer = document.getElementById('quickReplies');
@@ -873,139 +286,68 @@ sendBtn.addEventListener('click', sendMessage);
 function sendMessage() {
   const text = msgInput.value.trim();
   if (!text) return;
-
-  // Hide quick replies after first message
   qrContainer.style.display = 'none';
-
-  // Render outgoing bubble
   appendMessage(text, 'outgoing');
-
-  msgInput.value = '';
-  msgInput.style.height = 'auto';
-  charCount.textContent = '0 / 1000';
-
-  // Show typing indicator after a beat
+  msgInput.value = ''; msgInput.style.height='auto'; charCount.textContent='0 / 1000';
   setTimeout(showTyping, 600);
 }
 
 function sendQuickReply(btn) {
-  const text = btn.textContent.trim();
-  qrContainer.style.display = 'none';
-  appendMessage(text, 'outgoing');
+  qrContainer.style.display='none';
+  appendMessage(btn.textContent.trim(), 'outgoing');
   setTimeout(showTyping, 600);
 }
 
 function appendMessage(text, direction) {
-  const isOut = direction === 'outgoing';
-  const time  = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:true });
-
+  const isOut = direction==='outgoing';
+  const time = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
   const row = document.createElement('div');
-  row.className = `msg-row ${isOut ? 'outgoing' : ''}`;
-
-  const avatarEl = document.createElement('div');
-  avatarEl.className = `msg-avatar${isOut ? ' you' : ''}`;
-  avatarEl.textContent = isOut ? 'YOU' : 'DA';
-
-  const body = document.createElement('div');
-  body.className = 'msg-body';
-
-  const sender = document.createElement('div');
-  sender.className = 'msg-sender';
-  sender.textContent = isOut ? 'You' : 'Desmond';
-
-  const bubble = document.createElement('div');
-  bubble.className = `bubble ${isOut ? 'outgoing' : 'incoming'}`;
-  bubble.textContent = text;
-
-  const meta = document.createElement('div');
-  meta.className = 'msg-meta';
-  if (isOut) {
-    meta.innerHTML = `<span>${time}</span><span class="tick">✓✓</span>`;
-  } else {
-    meta.innerHTML = `<span>${time}</span>`;
-  }
-
-  body.appendChild(sender);
-  body.appendChild(bubble);
-  body.appendChild(meta);
-
-  if (isOut) {
-    row.appendChild(body);
-    row.appendChild(avatarEl);
-  } else {
-    row.appendChild(avatarEl);
-    row.appendChild(body);
-  }
-
-  wrap.appendChild(row);
-  scrollBottom();
+  row.className = `msg-row${isOut?' outgoing':''}`;
+  const av = document.createElement('div');
+  av.className = `msg-avatar${isOut?' you':''}`;
+  av.textContent = isOut?'YOU':'DA';
+  const body = document.createElement('div'); body.className='msg-body';
+  const sender = document.createElement('div'); sender.className='msg-sender'; sender.textContent=isOut?'You':'Desmond';
+  const bubble = document.createElement('div'); bubble.className=`bubble ${isOut?'outgoing':'incoming'}`; bubble.textContent=text;
+  const meta = document.createElement('div'); meta.className='msg-meta';
+  meta.innerHTML = isOut?`<span>${time}</span><span class="tick">✓✓</span>`:`<span>${time}</span>`;
+  body.appendChild(sender); body.appendChild(bubble); body.appendChild(meta);
+  if(isOut){row.appendChild(body);row.appendChild(av);}else{row.appendChild(av);row.appendChild(body);}
+  wrap.appendChild(row); scrollBottom();
 }
 
-/* ── Typing indicator ── */
-let typingEl = null;
+let typingEl=null;
 function showTyping() {
-  typingEl = document.createElement('div');
-  typingEl.className = 'typing-row';
-  typingEl.innerHTML = `
-    <div class="msg-avatar">DA</div>
-    <div class="typing-bubble">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>`;
-  wrap.appendChild(typingEl);
-  scrollBottom();
-
-  // Simulate Desmond's reply after 2–4s
-  const delay = 2000 + Math.random() * 2000;
-  setTimeout(() => {
-    if (typingEl && typingEl.parentNode) {
-      typingEl.remove();
-      typingEl = null;
-    }
-    showAutoReply();
-  }, delay);
+  typingEl=document.createElement('div'); typingEl.className='typing-row';
+  typingEl.innerHTML=`<div class="msg-avatar">DA</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  wrap.appendChild(typingEl); scrollBottom();
+  setTimeout(()=>{if(typingEl&&typingEl.parentNode){typingEl.remove();typingEl=null;}showAutoReply();}, 2000+Math.random()*2000);
 }
 
-/* Auto-reply pool (client-visible placeholder) */
 const autoReplies = [
-  "Thanks for reaching out! I'll get back to you shortly. 🚀",
+  "Thanks for reaching out! I will get back to you shortly.",
   "Got your message! I usually respond within a few hours.",
-  "Appreciate you reaching out. I'll review this and respond soon!",
-  "Message received! Looking forward to chatting with you. 💡",
-  "Hey, thanks for connecting! I'll reply as soon as I'm available."
+  "Appreciate you reaching out. I will review this and respond soon!",
+  "Message received! Looking forward to chatting with you.",
+  "Hey, thanks for connecting! I will reply as soon as I am available."
 ];
-let replyIdx = 0;
+let replyIdx=0;
+function showAutoReply() { appendMessage(autoReplies[replyIdx++%autoReplies.length],'incoming'); }
 
-function showAutoReply() {
-  const msg = autoReplies[replyIdx % autoReplies.length];
-  replyIdx++;
-  appendMessage(msg, 'incoming');
-}
-
-/* ── Attach file ── */
+/* ── FILE ATTACH ── */
 const fileInput = document.getElementById('fileInput');
-document.getElementById('attachBtn').addEventListener('click', () => fileInput.click());
-
-fileInput.addEventListener('change', () => {
-  const file = fileInput.files[0];
-  if (!file) return;
-  qrContainer.style.display = 'none';
-  appendMessage(`📎 ${file.name}`, 'outgoing');
-  fileInput.value = '';
-  setTimeout(showTyping, 600);
+document.getElementById('attachBtn').addEventListener('click', ()=>fileInput.click());
+fileInput.addEventListener('change', ()=>{
+  const file=fileInput.files[0]; if(!file)return;
+  qrContainer.style.display='none';
+  appendMessage(`Attached: ${file.name}`,'outgoing');
+  fileInput.value=''; setTimeout(showTyping,600);
 });
 
-/* ── Back button: go to portfolio ── */
-document.getElementById('backBtn').addEventListener('click', e => {
-  e.preventDefault();
-  window.history.back();
-});
+/* ── BACK BUTTON ── */
+document.getElementById('backBtn').addEventListener('click', e=>{e.preventDefault();window.location.href='index.html';});
 
-/* ── Scroll to bottom ── */
-function scrollBottom() {
-  wrap.scrollTop = wrap.scrollHeight;
-}
+function scrollBottom(){wrap.scrollTop=wrap.scrollHeight;}
 scrollBottom();
 </script>
 </body>

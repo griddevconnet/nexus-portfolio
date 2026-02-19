@@ -1,0 +1,13 @@
+{
+  "name": "nexus-portfolio",
+  "version": "1.0.0",
+  "description": "Desmond Amedzie's Portfolio with Developer Dashboard",
+  "scripts": {
+    "dev": "serve -s . -l 3000 --cors",
+    "dev-python": "python -m http.server 3000",
+    "dev-node": "npx http-server -p 3000 -c-1 --cors"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}

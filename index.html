@@ -22,15 +22,18 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;overflow-x:hidden;cursor:none}
 
-.cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;mix-blend-mode:screen}
-.cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(0,245,212,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease}
-.cursor.hovering{width:20px;height:20px;opacity:.6}
-.cursor-ring.hovering{width:60px;height:60px;border-color:rgba(0,245,212,.8)}
+/* ── CURSOR FIX: removed mix-blend-mode:screen, added solid glow ── */
+.cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;box-shadow:0 0 12px var(--accent),0 0 4px var(--accent)}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(0,245,212,0.6);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .15s ease,height .15s ease,border-color .15s ease}
+.cursor.hovering{width:16px;height:16px;opacity:.8}
+.cursor-ring.hovering{width:56px;height:56px;border-color:rgba(0,245,212,0.9)}
+@media(hover:none){.cursor,.cursor-ring{display:none}}
 
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(24px);background:rgba(5,8,16,.8);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);text-decoration:none;letter-spacing:.04em}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);text-decoration:none;letter-spacing:.04em;display:flex;align-items:center;gap:0.5rem}
+.nav-logo-text{background:linear-gradient(120deg,#00f5d4,#7b2fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.1rem;letter-spacing:0.18em}
 .nav-links{display:flex;gap:2.5rem;list-style:none}
 .nav-links a{color:var(--muted);text-decoration:none;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;transition:color .3s;position:relative}
 .nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s}
@@ -58,7 +61,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:
 
 /* 3D CUBE VISUAL */
 .hero-visual{display:flex;align-items:center;justify-content:center;animation:fadeInRight .9s .4s both;position:relative}
-
 .scene-3d{width:280px;height:280px;perspective:700px;position:relative}
 .cube-wrapper{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:rotateCube 14s linear infinite}
 .cube-face{position:absolute;width:160px;height:160px;top:50%;left:50%;margin:-80px;border:1px solid rgba(0,245,212,.25);background:rgba(0,245,212,.02);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(0,245,212,.5)}
@@ -73,7 +75,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:
 .orbit-ring:nth-child(2){width:260px;height:260px;animation-duration:8s}
 .orbit-ring:nth-child(3){width:320px;height:320px;animation-duration:12s;animation-direction:reverse;border-color:rgba(123,47,255,.15)}
 .orbit-ring:nth-child(4){width:380px;height:380px;animation-duration:18s;border-color:rgba(255,107,53,.1)}
-
 .orbit-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;position:absolute;top:-3px;left:50%;margin-left:-3px;box-shadow:0 0 12px var(--accent)}
 
 .floating-labels{position:absolute;inset:0;pointer-events:none}
@@ -94,33 +95,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:
 /* ===== ABOUT ===== */
 #about{padding:8rem 3rem;position:relative;z-index:1}
 .about-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1.3fr;gap:5rem;align-items:start}
-
 .section-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.8rem}
 .section-label::before{content:'';width:30px;height:1px;background:var(--accent)}
 .section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);line-height:1.1;margin-bottom:2rem}
-
 .about-card{background:rgba(10,15,26,.7);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;margin-bottom:1.2rem}
 .about-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--accent);transition:height .5s ease;transform-origin:top}
 .about-card:hover::before{height:100%}
 .about-card-title{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
 .about-card p{font-size:.78rem;line-height:1.9;color:rgba(232,234,240,.7)}
-
 .about-text p{font-size:.82rem;line-height:2;color:rgba(232,234,240,.75);margin-bottom:1.5rem}
 
 /* ===== SKILLS ===== */
 #skills{padding:8rem 3rem;position:relative;z-index:1;background:linear-gradient(180deg,transparent,rgba(0,245,212,.02) 50%,transparent)}
 .skills-inner{max-width:1200px;margin:0 auto}
 .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:4rem}
-
 .skill-card{background:rgba(10,15,26,.6);border:1px solid var(--border);padding:2rem;position:relative;overflow:hidden;transition:all .3s;cursor:none}
 .skill-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
 .skill-card:hover{border-color:rgba(0,245,212,.3);transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,245,212,.08)}
 .skill-card:hover::after{width:100%}
-
 .skill-icon{width:44px;height:44px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1.2rem;position:relative}
 .skill-icon::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;bottom:-1px;background:linear-gradient(135deg,var(--accent),var(--accent2));z-index:-1;opacity:0;transition:opacity .3s}
 .skill-card:hover .skill-icon::before{opacity:.3}
-
 .skill-card h3{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.8rem;color:var(--text)}
 .skill-tags{display:flex;flex-wrap:wrap;gap:.4rem}
 .skill-tag{font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,245,212,.7);background:rgba(0,245,212,.05);border:1px solid rgba(0,245,212,.12);padding:.2rem .5rem}
@@ -129,25 +124,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:
 #projects{padding:8rem 3rem;position:relative;z-index:1}
 .projects-inner{max-width:1200px;margin:0 auto}
 .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem;margin-top:4rem}
-
 .project-card{background:rgba(10,15,26,.8);border:1px solid var(--border);overflow:hidden;position:relative;transition:all .4s;cursor:none}
 .project-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,212,.04),rgba(123,47,255,.04));opacity:0;transition:opacity .4s}
 .project-card:hover::before{opacity:1}
 .project-card:hover{border-color:rgba(0,245,212,.25);transform:translateY(-8px);box-shadow:0 30px 70px rgba(0,0,0,.5)}
-
 .project-header{padding:1.8rem 1.8rem 0;display:flex;align-items:start;justify-content:space-between;gap:1rem}
 .project-num{font-family:'Syne',sans-serif;font-weight:800;font-size:3rem;color:rgba(0,245,212,.06);line-height:1;flex-shrink:0}
 .project-badge{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2rem}
 .badge-live{background:rgba(0,245,212,.1);color:var(--accent);border:1px solid rgba(0,245,212,.3)}
 .badge-wip{background:rgba(255,107,53,.1);color:var(--accent3);border:1px solid rgba(255,107,53,.3)}
-
 .project-body{padding:1rem 1.8rem 1.8rem}
 .project-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;margin-bottom:.5rem}
 .project-subtitle{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
 .project-desc{font-size:.76rem;line-height:1.9;color:rgba(232,234,240,.65);margin-bottom:1.4rem}
 .project-tech{display:flex;flex-wrap:wrap;gap:.4rem}
 .project-tech span{font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);padding:.2rem .5rem}
-
 .project-footer{padding:0 1.8rem 1.8rem;display:flex;align-items:center;gap:1rem}
 .project-link{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,245,212,.6);text-decoration:none;display:flex;align-items:center;gap:.4rem;transition:color .3s}
 .project-link:hover{color:var(--accent)}
@@ -158,7 +149,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.4rem 3rem;display:
 #achievements{padding:8rem 3rem;position:relative;z-index:1}
 .achievements-inner{max-width:1200px;margin:0 auto}
 .achievements-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;margin-top:4rem}
-
 .achievement-card{background:rgba(10,15,26,.6);border:1px solid var(--border);padding:2rem;display:flex;gap:1.5rem;align-items:start;transition:all .3s;cursor:none;position:relative;overflow:hidden}
 .achievement-card:hover{border-color:rgba(0,245,212,.25);transform:translateX(6px)}
 .achievement-card::before{content:'';position:absolute;left:0;top:0;width:2px;height:0;background:linear-gradient(180deg,var(--accent),var(--accent2));transition:height .4s}
@@ -196,11 +186,13 @@ footer{border-top:1px solid var(--border);padding:1.5rem 3rem;position:relative;
 @keyframes rotateCube{0%{transform:rotateX(10deg) rotateY(0deg)}100%{transform:rotateX(10deg) rotateY(360deg)}}
 @keyframes spinRing{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes floatTag{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* scroll reveal */
+/* ── REVEAL FIX: CSS animation fallback ensures content always shows ── */
 .reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
+/* Safety net: force-show after 1.5s even if IntersectionObserver fails */
+.reveal{animation:revealFallback 0s 1.5s both}
+@keyframes revealFallback{to{opacity:1;transform:translateY(0)}}
 
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){
@@ -209,14 +201,13 @@ footer{border-top:1px solid var(--border);padding:1.5rem 3rem;position:relative;
   #hero{padding:5rem 1.5rem 2rem}
   .hero-inner{grid-template-columns:1fr}
   .hero-visual{display:none}
-  #about,.about-inner{padding:4rem 1.5rem}
-  .about-inner{grid-template-columns:1fr}
+  #about{padding:4rem 1.5rem}
+  .about-inner{grid-template-columns:1fr;gap:2rem}
   #skills,#projects,#achievements,#contact{padding:4rem 1.5rem}
   .contact-grid{grid-template-columns:1fr}
   footer{padding:1.5rem;flex-direction:column;gap:1rem;text-align:center}
 }
 
-/* noise overlay */
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:200;opacity:.35}
 </style>
 </head>
@@ -224,14 +215,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
-
 <canvas id="bg-canvas"></canvas>
 
 <!-- NAV -->
 <nav>
-  <a href="#hero" class="nav-logo" style="display:flex;align-items:center;gap:0.5rem;background:linear-gradient(120deg,#00f5d4,#7b2fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:1.1rem;letter-spacing:0.18em">
-    <img src="public/nexus-logo.png" alt="Nexus Logo" style="width:36px;height:36px;object-fit:contain;">
-    Nexus
+  <a href="#hero" class="nav-logo">
+    <img src="public/nexus-logo.png" alt="Nexus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'">
+    <span class="nav-logo-text">Nexus</span>
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -248,17 +238,16 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <div class="hero-text">
       <span class="hero-tag">Full-Stack Developer · AI Enthusiast</span>
       <h1 class="hero-name">
-        <span class="line1">Desmond</span>
+        <span class="line1">Desmond</span><br>
         <span class="line2">Amedzie</span>
       </h1>
-      <p class="hero-role">// Building AI-Integrated Systems & Smart Platforms</p>
+      <p class="hero-role">// Building AI-Integrated Systems &amp; Smart Platforms</p>
       <p class="hero-desc">IT undergraduate at UENR crafting real-world full-stack web apps, mobile platforms, and AI-powered automation tools. From student marketplaces to hotel ERPs — I solve problems with clean code and creative engineering.</p>
       <div class="hero-btns">
         <a href="#projects" class="btn-primary">View Projects</a>
-        <a href="#contact" class="btn-outline">Contact Me</a>
+        <a href="nexus_chat.html" class="btn-outline">Contact Me</a>
       </div>
     </div>
-
     <div class="hero-visual">
       <div class="scene-3d">
         <div class="orbit-ring"><div class="orbit-dot"></div></div>
@@ -307,20 +296,19 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
         <p>BSc Information Technology student at the University of Energy and Natural Resources (UENR), Level 200, graduating 2027. Combining rigorous academic training with real-world development.</p>
       </div>
       <div class="about-card">
-        <div class="about-card-title">Location & Identity</div>
+        <div class="about-card-title">Location &amp; Identity</div>
         <p>Based in Kumasi, Ghana. Passionate about building tech solutions that solve real African and global challenges — from student platforms to smart monitoring systems.</p>
       </div>
       <div class="about-card">
         <div class="about-card-title">Entrepreneur at Heart</div>
-        <p>Beyond code, I've launched a grape juice business and design UI/UX with graphic design sensitivity. I'm a builder by nature — digital and physical.</p>
+        <p>Beyond code, I have launched a grape juice business and design UI/UX with graphic design sensitivity. I am a builder by nature — digital and physical.</p>
       </div>
     </div>
-
     <div class="about-text">
       <p class="section-label">Profile</p>
-      <p>I build practical digital solutions end-to-end — combining frontend precision, backend logic, and real-world problem solving to create systems that actually get used. My work spans from student marketplaces and hotel booking systems to AI-integrated monitoring tools and mobile departmental apps.</p>
-      <p>I combine deep technical skill with a product mindset — I don't just write code, I solve problems. My exposure to AI APIs, cloud databases, and modern deployment workflows sets me apart as someone ready for production-level engineering challenges.</p>
-      <p>Currently exploring the intersection of <span style="color:var(--accent)">AI safety monitoring</span>, <span style="color:var(--accent2)">IoT health-tech</span>, and <span style="color:var(--accent3)">enterprise automation</span>. I'm building the future one system at a time.</p>
+      <p>I build practical digital solutions end-to-end — combining frontend precision, backend logic, and real-world problem solving to create systems that actually get used.</p>
+      <p>I combine deep technical skill with a product mindset — I do not just write code, I solve problems. My exposure to AI APIs, cloud databases, and modern deployment workflows sets me apart as someone ready for production-level engineering challenges.</p>
+      <p>Currently exploring the intersection of <span style="color:var(--accent)">AI safety monitoring</span>, <span style="color:var(--accent2)">IoT health-tech</span>, and <span style="color:var(--accent3)">enterprise automation</span>. I am building the future one system at a time.</p>
     </div>
   </div>
 </section>
@@ -331,73 +319,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <p class="section-label reveal">Technical Skills</p>
     <h2 class="section-title reveal">My <span style="color:var(--accent)">Arsenal</span></h2>
     <div class="skills-grid">
-      <div class="skill-card reveal">
-        <div class="skill-icon">⚡</div>
-        <h3>Frontend</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">React.js</span>
-          <span class="skill-tag">HTML5</span>
-          <span class="skill-tag">CSS3</span>
-          <span class="skill-tag">Tailwind CSS</span>
-          <span class="skill-tag">Bootstrap</span>
-          <span class="skill-tag">Responsive UI</span>
-          <span class="skill-tag">JavaScript</span>
-        </div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="skill-icon">🔧</div>
-        <h3>Backend</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">Node.js</span>
-          <span class="skill-tag">Django</span>
-          <span class="skill-tag">Flask</span>
-          <span class="skill-tag">Python</span>
-          <span class="skill-tag">RESTful APIs</span>
-          <span class="skill-tag">Auth Systems</span>
-        </div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="skill-icon">🗄️</div>
-        <h3>Databases & Cloud</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">MongoDB Atlas</span>
-          <span class="skill-tag">PostgreSQL</span>
-          <span class="skill-tag">SQLite</span>
-          <span class="skill-tag">Firebase</span>
-          <span class="skill-tag">Vercel</span>
-          <span class="skill-tag">GitHub</span>
-        </div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="skill-icon">📱</div>
-        <h3>Mobile Development</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">React Native</span>
-          <span class="skill-tag">Mobile UI Design</span>
-          <span class="skill-tag">State Management</span>
-          <span class="skill-tag">Role-Based Access</span>
-        </div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="skill-icon">🤖</div>
-        <h3>AI & Automation</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">OpenAI API</span>
-          <span class="skill-tag">AI Integration</span>
-          <span class="skill-tag">Intelligent Monitoring</span>
-          <span class="skill-tag">Workflow Automation</span>
-        </div>
-      </div>
-      <div class="skill-card reveal">
-        <div class="skill-icon">🎨</div>
-        <h3>Design & Creative</h3>
-        <div class="skill-tags">
-          <span class="skill-tag">UI/UX Design</span>
-          <span class="skill-tag">Graphic Design</span>
-          <span class="skill-tag">Visual Branding</span>
-          <span class="skill-tag">Dashboards</span>
-        </div>
-      </div>
+      <div class="skill-card reveal"><div class="skill-icon">⚡</div><h3>Frontend</h3><div class="skill-tags"><span class="skill-tag">React.js</span><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3</span><span class="skill-tag">Tailwind CSS</span><span class="skill-tag">Bootstrap</span><span class="skill-tag">JavaScript</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">🔧</div><h3>Backend</h3><div class="skill-tags"><span class="skill-tag">Node.js</span><span class="skill-tag">Django</span><span class="skill-tag">Flask</span><span class="skill-tag">Python</span><span class="skill-tag">RESTful APIs</span><span class="skill-tag">Auth Systems</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">🗄️</div><h3>Databases &amp; Cloud</h3><div class="skill-tags"><span class="skill-tag">MongoDB Atlas</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">SQLite</span><span class="skill-tag">Firebase</span><span class="skill-tag">Vercel</span><span class="skill-tag">GitHub</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">📱</div><h3>Mobile Development</h3><div class="skill-tags"><span class="skill-tag">React Native</span><span class="skill-tag">Mobile UI Design</span><span class="skill-tag">State Management</span><span class="skill-tag">Role-Based Access</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">🤖</div><h3>AI &amp; Automation</h3><div class="skill-tags"><span class="skill-tag">OpenAI API</span><span class="skill-tag">AI Integration</span><span class="skill-tag">Intelligent Monitoring</span><span class="skill-tag">Workflow Automation</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">🎨</div><h3>Design &amp; Creative</h3><div class="skill-tags"><span class="skill-tag">UI/UX Design</span><span class="skill-tag">Graphic Design</span><span class="skill-tag">Visual Branding</span><span class="skill-tag">Dashboards</span></div></div>
     </div>
   </div>
 </section>
@@ -408,116 +335,66 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <p class="section-label reveal">Work</p>
     <h2 class="section-title reveal">Featured <span style="color:var(--accent)">Projects</span></h2>
     <div class="projects-grid">
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">01</span>
-          <span class="project-badge badge-live">Live</span>
-        </div>
+        <div class="project-header"><span class="project-num">01</span><span class="project-badge badge-live">Live</span></div>
         <div class="project-body">
           <h3 class="project-title">Unitradegh</h3>
           <p class="project-subtitle">Student-Based Marketing Platform</p>
-          <p class="project-desc">A full-stack web platform enabling students to market and sell products securely. Features authentication, user dashboards, product listing workflows, and scalable backend APIs for real-time updates. Selected as a hackathon showcase project presented to industry stakeholders.</p>
-          <div class="project-tech">
-            <span>React.js</span><span>Node.js</span><span>PostgreSQL</span><span>REST API</span><span>Authentication</span>
-          </div>
+          <p class="project-desc">A full-stack web platform enabling students to market and sell products securely. Features authentication, user dashboards, product listing workflows, and scalable backend APIs. Selected as a hackathon showcase project.</p>
+          <div class="project-tech"><span>React.js</span><span>Node.js</span><span>PostgreSQL</span><span>REST API</span><span>Authentication</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">View Project <span class="arrow">→</span></a>
-          <a href="#" class="project-link">GitHub <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">View Project <span class="arrow">→</span></a><a href="#" class="project-link">GitHub <span class="arrow">→</span></a></div>
       </div>
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">02</span>
-          <span class="project-badge badge-wip">In Progress</span>
-        </div>
+        <div class="project-header"><span class="project-num">02</span><span class="project-badge badge-wip">In Progress</span></div>
         <div class="project-body">
           <h3 class="project-title">Departmental Mobile App</h3>
           <p class="project-subtitle">Academic Management Platform</p>
-          <p class="project-desc">A cross-platform mobile application for academic and departmental use at UENR. Focused on usability, real-world deployment performance, and scalable backend integration with role-based access control for students, lecturers, and admins.</p>
-          <div class="project-tech">
-            <span>React Native</span><span>Firebase</span><span>Role-Based Access</span><span>Mobile UI</span>
-          </div>
+          <p class="project-desc">A cross-platform mobile application for academic use at UENR. Role-based access control for students, lecturers, and admins with real-time backend integration.</p>
+          <div class="project-tech"><span>React Native</span><span>Firebase</span><span>Role-Based Access</span><span>Mobile UI</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">Coming Soon <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">Coming Soon <span class="arrow">→</span></a></div>
       </div>
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">03</span>
-          <span class="project-badge badge-live">Built</span>
-        </div>
+        <div class="project-header"><span class="project-num">03</span><span class="project-badge badge-live">Built</span></div>
         <div class="project-body">
           <h3 class="project-title">Hotel Management ERP</h3>
           <p class="project-subtitle">Northern Capital Hotel System</p>
-          <p class="project-desc">Full-featured hotel management platform with booking management, admin dashboards, reporting automation, and customer reservation workflows. An ERP-style system built for production deployment with real operational impact.</p>
-          <div class="project-tech">
-            <span>Django</span><span>PostgreSQL</span><span>Python</span><span>Booking Engine</span><span>Admin Dashboard</span>
-          </div>
+          <p class="project-desc">Full-featured hotel management platform with booking management, admin dashboards, reporting automation, and customer reservation workflows built for production deployment.</p>
+          <div class="project-tech"><span>Django</span><span>PostgreSQL</span><span>Python</span><span>Booking Engine</span><span>Admin Dashboard</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">Case Study <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">Case Study <span class="arrow">→</span></a></div>
       </div>
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">04</span>
-          <span class="project-badge badge-live">Built</span>
-        </div>
+        <div class="project-header"><span class="project-num">04</span><span class="project-badge badge-live">Built</span></div>
         <div class="project-body">
           <h3 class="project-title">Bar Management Software</h3>
-          <p class="project-subtitle">Sales & Inventory Automation</p>
-          <p class="project-desc">ERP-style bar management system featuring sales tracking, inventory management, staff authentication, and automated receipt generation. Built to automate real operational workflows and reduce manual processes.</p>
-          <div class="project-tech">
-            <span>Python</span><span>Flask</span><span>SQLite</span><span>Auth</span><span>Receipt Engine</span>
-          </div>
+          <p class="project-subtitle">Sales &amp; Inventory Automation</p>
+          <p class="project-desc">ERP-style bar management system with sales tracking, inventory management, staff authentication, and automated receipt generation to reduce manual processes.</p>
+          <div class="project-tech"><span>Python</span><span>Flask</span><span>SQLite</span><span>Auth</span><span>Receipt Engine</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">View Details <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">View Details <span class="arrow">→</span></a></div>
       </div>
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">05</span>
-          <span class="project-badge badge-wip">Concept</span>
-        </div>
+        <div class="project-header"><span class="project-num">05</span><span class="project-badge badge-wip">Concept</span></div>
         <div class="project-body">
           <h3 class="project-title">AI Safety Monitor</h3>
-          <p class="project-subtitle">Campus Security & IoT Platform</p>
-          <p class="project-desc">An emerging AI-powered campus surveillance and safety monitoring system. Combining computer vision, IoT sensors, and intelligent alerting to create smarter, safer academic environments. Part of my long-term innovation vision.</p>
-          <div class="project-tech">
-            <span>AI Vision</span><span>IoT</span><span>Python</span><span>Real-time Alerts</span><span>OpenAI API</span>
-          </div>
+          <p class="project-subtitle">Campus Security &amp; IoT Platform</p>
+          <p class="project-desc">An AI-powered campus surveillance and safety monitoring system combining computer vision, IoT sensors, and intelligent alerting for smarter academic environments.</p>
+          <div class="project-tech"><span>AI Vision</span><span>IoT</span><span>Python</span><span>Real-time Alerts</span><span>OpenAI API</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">Explore Concept <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">Explore Concept <span class="arrow">→</span></a></div>
       </div>
-
       <div class="project-card reveal">
-        <div class="project-header">
-          <span class="project-num">06</span>
-          <span class="project-badge badge-wip">Innovation</span>
-        </div>
+        <div class="project-header"><span class="project-num">06</span><span class="project-badge badge-wip">Innovation</span></div>
         <div class="project-body">
           <h3 class="project-title">Health Wearable Platform</h3>
           <p class="project-subtitle">IoT Health Monitoring System</p>
-          <p class="project-desc">An AI-powered wearable health monitoring concept that connects IoT health sensors to intelligent data dashboards. Targeted at emerging health-tech markets in Ghana with real-time vitals tracking and anomaly detection.</p>
-          <div class="project-tech">
-            <span>IoT</span><span>React Native</span><span>AI Integration</span><span>Health Data</span><span>Firebase</span>
-          </div>
+          <p class="project-desc">An AI-powered wearable health monitoring concept connecting IoT health sensors to intelligent dashboards for real-time vitals tracking and anomaly detection.</p>
+          <div class="project-tech"><span>IoT</span><span>React Native</span><span>AI Integration</span><span>Health Data</span><span>Firebase</span></div>
         </div>
-        <div class="project-footer">
-          <a href="#" class="project-link">Learn More <span class="arrow">→</span></a>
-        </div>
+        <div class="project-footer"><a href="#" class="project-link">Learn More <span class="arrow">→</span></a></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -528,54 +405,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <p class="section-label reveal">Recognition</p>
     <h2 class="section-title reveal">Awards &amp; <span style="color:var(--accent)">Milestones</span></h2>
     <div class="achievements-list">
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">🥈</span>
-        <div class="achievement-content">
-          <h3>1st Runner-Up — UENR ITS Hackathon</h3>
-          <p>Competed and placed as 1st Runner-Up at the University's flagship technology hackathon, showcasing UnitradeGH to a panel of industry judges and stakeholders.</p>
-          <span class="achievement-year">2025</span>
-        </div>
-      </div>
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">🎤</span>
-        <div class="achievement-content">
-          <h3>Project Showcase — TECH IN GHANA</h3>
-          <p>Earned a prestigious project showcase slot at TECH IN GHANA 2025 in Kumasi, presenting innovation work to Ghana's leading tech community.</p>
-          <span class="achievement-year">2025 · Kumasi</span>
-        </div>
-      </div>
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">📜</span>
-        <div class="achievement-content">
-          <h3>Certificate of Participation — UENR ITS</h3>
-          <p>Recognized with an official certificate of participation from the UENR Information Technology Society Hackathon for outstanding contribution.</p>
-          <span class="achievement-year">2025</span>
-        </div>
-      </div>
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">🎓</span>
-        <div class="achievement-content">
-          <h3>BSc Information Technology</h3>
-          <p>Pursuing a Bachelor of Science in Information Technology at the University of Energy and Natural Resources (UENR), currently at Level 200.</p>
-          <span class="achievement-year">2024 – 2027</span>
-        </div>
-      </div>
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">🚀</span>
-        <div class="achievement-content">
-          <h3>Entrepreneurial Launch</h3>
-          <p>Founded and launched a grape juice business, combining technical skills with real-world entrepreneurship and business operations.</p>
-          <span class="achievement-year">2024</span>
-        </div>
-      </div>
-      <div class="achievement-card reveal">
-        <span class="achievement-icon">🤝</span>
-        <div class="achievement-content">
-          <h3>Industry Stakeholder Presentation</h3>
-          <p>UnitradeGH was selected and showcased directly to industry stakeholders as part of the hackathon's innovation exhibition.</p>
-          <span class="achievement-year">2025</span>
-        </div>
-      </div>
+      <div class="achievement-card reveal"><span class="achievement-icon">🥈</span><div class="achievement-content"><h3>1st Runner-Up — UENR ITS Hackathon</h3><p>Placed as 1st Runner-Up at the University flagship technology hackathon, showcasing UnitradeGH to a panel of industry judges and stakeholders.</p><span class="achievement-year">2025</span></div></div>
+      <div class="achievement-card reveal"><span class="achievement-icon">🎤</span><div class="achievement-content"><h3>Project Showcase — TECH IN GHANA</h3><p>Earned a prestigious project showcase slot at TECH IN GHANA 2025 in Kumasi, presenting innovation work to Ghana top tech community.</p><span class="achievement-year">2025 · Kumasi</span></div></div>
+      <div class="achievement-card reveal"><span class="achievement-icon">📜</span><div class="achievement-content"><h3>Certificate of Participation — UENR ITS</h3><p>Recognized with an official certificate of participation from the UENR Information Technology Society Hackathon.</p><span class="achievement-year">2025</span></div></div>
+      <div class="achievement-card reveal"><span class="achievement-icon">🎓</span><div class="achievement-content"><h3>BSc Information Technology</h3><p>Pursuing a Bachelor of Science in Information Technology at the University of Energy and Natural Resources (UENR), currently at Level 200.</p><span class="achievement-year">2024 – 2027</span></div></div>
+      <div class="achievement-card reveal"><span class="achievement-icon">🚀</span><div class="achievement-content"><h3>Entrepreneurial Launch</h3><p>Founded and launched a grape juice business, combining technical skills with real-world entrepreneurship and business operations.</p><span class="achievement-year">2024</span></div></div>
+      <div class="achievement-card reveal"><span class="achievement-icon">🤝</span><div class="achievement-content"><h3>Industry Stakeholder Presentation</h3><p>UnitradeGH was selected and showcased directly to industry stakeholders as part of the hackathon innovation exhibition.</p><span class="achievement-year">2025</span></div></div>
     </div>
   </div>
 </section>
@@ -586,23 +421,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="contact-inner">
     <p class="section-label reveal" style="justify-content:center">Get In Touch</p>
     <h2 class="contact-title reveal">Let's build<br>something <span>great</span></h2>
-    <p class="contact-desc reveal">Whether you're looking for a full-stack developer, AI integration partner, or someone to bring your product vision to life — let's talk.</p>
+    <p class="contact-desc reveal">Whether you are looking for a full-stack developer, AI integration partner, or someone to bring your product vision to life — let us talk.</p>
     <div class="contact-grid reveal">
-      <div class="contact-item">
-        <div class="contact-item-icon">📱</div>
-        <span class="contact-item-label">Phone</span>
-        <span class="contact-item-val">+233 5309 13920</span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-item-icon">✉️</div>
-        <span class="contact-item-label">Email</span>
-        <span class="contact-item-val"><a href="mailto:damedzie4@gmail.com">damedzie4@gmail.com</a></span>
-      </div>
-      <div class="contact-item">
-        <div class="contact-item-icon">📍</div>
-        <span class="contact-item-label">Location</span>
-        <span class="contact-item-val">Kumasi, Ghana</span>
-      </div>
+      <div class="contact-item"><div class="contact-item-icon">📱</div><span class="contact-item-label">Phone</span><span class="contact-item-val">+233 5309 13920</span></div>
+      <div class="contact-item"><div class="contact-item-icon">✉️</div><span class="contact-item-label">Email</span><span class="contact-item-val"><a href="mailto:damedzie4@gmail.com">damedzie4@gmail.com</a></span></div>
+      <div class="contact-item"><div class="contact-item-icon">📍</div><span class="contact-item-label">Location</span><span class="contact-item-val">Kumasi, Ghana</span></div>
     </div>
     <a href="nexus_chat.html" class="btn-primary reveal">Start a Conversation →</a>
   </div>
@@ -616,22 +439,20 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 <script src="router.js"></script>
 <script>
-// Cursor
+/* ── CURSOR: fixed, no mix-blend-mode issues ── */
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mx = 0, my = 0, rx = 0, ry = 0;
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
 function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
+  rx += (mx - rx) * 0.1;
+  ry += (my - ry) * 0.1;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+  ring.style.left   = rx + 'px';
+  ring.style.top    = ry + 'px';
   requestAnimationFrame(animRing);
 }
 animRing();
@@ -641,155 +462,86 @@ document.querySelectorAll('a, button, .skill-card, .project-card, .achievement-c
   el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
 });
 
-// Canvas particle field
+/* ── CANVAS PARTICLES ── */
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-const particles = [];
-const PARTICLE_COUNT = 80;
-
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  particles.push({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    vx: (Math.random() - 0.5) * 0.3,
-    vy: (Math.random() - 0.5) * 0.3,
-    r: Math.random() * 1.5 + 0.3,
-    alpha: Math.random() * 0.4 + 0.1,
-    color: Math.random() > 0.5 ? '0,245,212' : '123,47,255'
-  });
+const pts = [];
+for (let i = 0; i < 30; i++) {
+  pts.push({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+    vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2,
+    r:Math.random()*1.2+.3, a:Math.random()*.35+.1,
+    c:Math.random()>.5?'0,245,212':'123,47,255' });
 }
 
 function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      const dx = particles[i].x - particles[j].x;
-      const dy = particles[i].y - particles[j].y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 120) {
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(0,245,212,${0.08 * (1 - dist/120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.stroke();
-      }
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for (let i=0;i<pts.length;i++) {
+    for (let j=i+1;j<pts.length;j++) {
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if (d<100) { ctx.beginPath(); ctx.strokeStyle=`rgba(0,245,212,${.05*(1-d/100)})`; ctx.lineWidth=.4; ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
     }
   }
-
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0) p.x = canvas.width;
-    if (p.x > canvas.width) p.x = 0;
-    if (p.y < 0) p.y = canvas.height;
-    if (p.y > canvas.height) p.y = 0;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
-    ctx.fill();
+  pts.forEach(p => {
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.c},${p.a})`; ctx.fill();
   });
-
-  particles.forEach(p => {
-    const dx = p.x - mx;
-    const dy = p.y - my;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist < 100) {
-      p.x += dx / dist * 0.8;
-      p.y += dy / dist * 0.8;
-    }
-  });
-
   requestAnimationFrame(drawParticles);
 }
 drawParticles();
 
-// Scroll reveal
+/* ── SCROLL REVEAL via IntersectionObserver ── */
 const revealEls = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.08 });
 revealEls.forEach(el => observer.observe(el));
 
-// Animate stat numbers
-function animateNum(el, target, suffix = '') {
-  let current = 0;
-  const step = target / 40;
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    el.textContent = Math.floor(current) + suffix;
-    if (current >= target) clearInterval(timer);
-  }, 30);
+/* ── STAT NUMBER ANIMATION ── */
+function animateNum(el, target, suffix='') {
+  let cur = 0; const step = target / 40;
+  const t = setInterval(() => { cur=Math.min(cur+step,target); el.textContent=Math.floor(cur)+suffix; if(cur>=target)clearInterval(t); }, 30);
 }
-
 const statsObs = new IntersectionObserver(entries => {
   if (entries[0].isIntersecting) {
     document.querySelectorAll('.stat-num').forEach(el => {
-      const text = el.textContent;
-      const num = parseInt(text);
-      const suffix = text.replace(/[0-9]/g, '');
-      animateNum(el, num, suffix);
+      const txt=el.textContent, num=parseInt(txt), suffix=txt.replace(/[0-9]/g,'');
+      animateNum(el,num,suffix);
     });
     statsObs.disconnect();
   }
 }, { threshold: 0.5 });
 statsObs.observe(document.querySelector('.stats-bar'));
 
-// Glitch effect on name
+/* ── HERO NAME GLITCH ── */
 const line2 = document.querySelector('.hero-name .line2');
 const originalText = 'Amedzie';
 let glitchInterval;
-
 function startGlitch() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234';
-  let iter = 0;
-  clearInterval(glitchInterval);
+  let iter = 0; clearInterval(glitchInterval);
   glitchInterval = setInterval(() => {
-    line2.textContent = originalText.split('').map((char, idx) => {
-      if (idx < iter) return char;
-      return chars[Math.floor(Math.random() * chars.length)];
-    }).join('');
-    if (iter >= originalText.length) clearInterval(glitchInterval);
-    iter += 0.5;
+    line2.textContent = originalText.split('').map((ch,idx) => idx<iter?ch:chars[Math.floor(Math.random()*chars.length)]).join('');
+    if (iter>=originalText.length) clearInterval(glitchInterval);
+    iter+=.5;
   }, 30);
 }
+if (line2) { line2.addEventListener('mouseenter', startGlitch); setTimeout(startGlitch, 1200); }
 
-if (line2) {
-  line2.addEventListener('mouseenter', startGlitch);
-  setTimeout(startGlitch, 1200);
-}
-
-// 3D tilt on project cards
+/* ── PROJECT CARD 3D TILT ── */
 document.querySelectorAll('.project-card').forEach(card => {
   card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    const rotY = (x - cx) / cx * 6;
-    const rotX = -(y - cy) / cy * 4;
-    card.style.transform = `translateY(-8px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    const r=card.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    card.style.transform=`translateY(-8px) rotateX(${-(y-r.height/2)/r.height*4}deg) rotateY(${(x-r.width/2)/r.width*6}deg)`;
+    card.style.transition='border-color .3s,box-shadow .3s';
   });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-    card.style.transition = 'all .4s';
-  });
-  card.addEventListener('mouseenter', () => {
-    card.style.transition = 'border-color .3s, box-shadow .3s';
-  });
+  card.addEventListener('mouseleave', () => { card.style.transform=''; card.style.transition='all .4s'; });
 });
 </script>
 </body>

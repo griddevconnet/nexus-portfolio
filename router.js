@@ -1,92 +1,81 @@
-// Simple URL router for Nexus site
-class NexusRouter {
-  constructor() {
-    this.routes = {
-      '/': 'index.html',
-      '/developer': 'dev_chat.html',
-      '/developer.nexus': 'dev_chat.html',
-      '/chat': 'nexus_chat.html'
-    };
-    this.init();
-  }
+/**
+ * Nexus Router — v2.0
+ * Simple, clean navigation for static HTML files.
+ * Uses window.location.href instead of innerHTML swapping
+ * to preserve JS contexts, animations, and event listeners.
+ */
+
+const NexusRouter = {
+  routes: {
+    '/':                   'index.html',
+    '/index.html':         'index.html',
+    '/chat':               'nexus_chat.html',
+    '/nexus_chat.html':    'nexus_chat.html',
+    '/developer':          'dev_chat.html',
+    '/developer.nexus':    'dev_chat.html',
+    '/dev_chat.html':      'dev_chat.html',
+  },
 
   init() {
-    // Handle initial page load
-    this.handleRoute();
-    
-    // Handle browser navigation
-    window.addEventListener('popstate', () => this.handleRoute());
-    
-    // Handle navigation clicks
+    // Intercept only internal anchor clicks with href starting with "/"
     document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="/"]');
-      if (link) {
-        e.preventDefault();
-        const path = link.getAttribute('href');
-        this.navigate(path);
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+
+      const href = link.getAttribute('href');
+
+      // Skip: external links, anchors (#), mailto, tel
+      if (!href || href.startsWith('http') || href.startsWith('#') ||
+          href.startsWith('mailto') || href.startsWith('tel')) return;
+
+      // Skip: direct .html file links — let the browser handle normally
+      if (href.endsWith('.html')) return;
+
+      // Handle route paths like /developer, /chat, /
+      if (href.startsWith('/')) {
+        const target = this.routes[href];
+        if (target) {
+          e.preventDefault();
+          this.go(target);
+        }
+        // If no route match, let browser handle it
       }
     });
-  }
 
-  handleRoute() {
-    const path = window.location.pathname;
-    const cleanPath = path.replace(/\/$/, '') || '/';
-    
-    if (this.routes[cleanPath]) {
-      this.loadPage(this.routes[cleanPath]);
-    } else if (cleanPath.startsWith('/developer')) {
-      // Handle any developer sub-paths
-      this.loadPage('dev_chat.html');
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', () => {
+      const path = window.location.pathname;
+      const cleanPath = path.replace(/\/$/, '') || '/';
+      const target = this.routes[cleanPath];
+      if (target && !window.location.pathname.endsWith(target)) {
+        window.location.href = target;
+      }
+    });
+  },
+
+  go(page) {
+    // Simple, reliable navigation — no DOM destruction
+    window.location.href = page;
+  },
+
+  // Helper: navigate by route name from JS
+  navigate(routePath) {
+    const target = this.routes[routePath];
+    if (target) {
+      this.go(target);
+    } else {
+      console.warn(`NexusRouter: No route found for "${routePath}"`);
     }
   }
+};
 
-  navigate(path) {
-    window.history.pushState({}, '', path);
-    this.handleRoute();
-  }
-
-  loadPage(page) {
-    // Show loading state
-    document.body.style.opacity = '0.5';
-    
-    fetch(page)
-      .then(response => {
-        if (response.ok) {
-          return response.text();
-        }
-        throw new Error('Page not found');
-      })
-      .then(html => {
-        document.documentElement.innerHTML = html;
-        document.body.style.opacity = '1';
-        
-        // Re-initialize any scripts that were in the loaded page
-        this.reinitializeScripts();
-      })
-      .catch(error => {
-        console.error('Failed to load page:', error);
-        document.body.style.opacity = '1';
-        // Fallback to main page
-        window.location.href = 'index.html';
-      });
-  }
-
-  reinitializeScripts() {
-    // Re-run any inline scripts that were loaded
-    const scripts = document.querySelectorAll('script:not([src])');
-    scripts.forEach(script => {
-      const newScript = document.createElement('script');
-      newScript.textContent = script.textContent;
-      document.head.appendChild(newScript);
-      document.head.removeChild(newScript);
-    });
-  }
+// Auto-init when DOM is ready — with guard for already-loaded DOM
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => NexusRouter.init());
+} else {
+  // DOM already loaded (script placed at bottom of body)
+  NexusRouter.init();
 }
 
-// Initialize router when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  new NexusRouter();
-});
-
-// Export for global access
+// Expose globally
 window.NexusRouter = NexusRouter;
