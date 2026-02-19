@@ -1,5 +1,3 @@
-/* Netlify redirects for custom routing */
-[[redirects]]
-  "/developer" = "/dev_chat.html"
-  "/developer.nexus" = "/dev_chat.html"
-  "/developer/" = "/dev_chat.html"
+/developer /dev_chat.html 301
+/developer.nexus /dev_chat.html 301
+/developer/ /dev_chat.html 301
