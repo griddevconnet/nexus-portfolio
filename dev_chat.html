@@ -751,9 +751,6 @@ function updateStats() {
   document.getElementById('statTotal').textContent = conversations.length;
   document.getElementById('statUnread').textContent = unreadCount;
   document.getElementById('statReplied').textContent = repliedCount;
-  const badge = document.getElementById('unreadBadge');
-  badge.textContent = unreadCount;
-  badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
 }
 
 function switchTab(btn) {
