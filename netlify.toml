@@ -1,0 +1,23 @@
+[build]
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/developer"
+  to = "/dev_chat.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/developer.nexus"
+  to = "/dev_chat.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/developer/"
+  to = "/dev_chat.html"
+  status = 301
+  force = true
