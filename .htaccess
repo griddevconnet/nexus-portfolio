@@ -1,0 +1,16 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Handle developer.nexus route
+RewriteRule ^developer\.nexus$ dev_chat.html [L]
+
+# Handle /developer route
+RewriteRule ^developer/?$ dev_chat.html [L]
+
+# Handle /chat route
+RewriteRule ^chat/?$ nexus_chat.html [L]
+
+# Fallback to index.html for other routes (optional SPA behavior)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.html [L]
