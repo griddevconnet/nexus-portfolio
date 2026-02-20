@@ -14,13 +14,13 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: False
+        value: false
       - key: ALLOWED_HOSTS
         value: nexus-chat-backend.onrender.com
       - key: DB_NAME
         fromDatabase:
           name: nexus-chat-db
-          property: name
+          property: database
       - key: DB_USER
         fromDatabase:
           name: nexus-chat-db
@@ -34,7 +34,9 @@ services:
           name: nexus-chat-db
           property: host
       - key: DB_PORT
-        value: 5432
+        fromDatabase:
+          name: nexus-chat-db
+          property: port
       - key: CELERY_BROKER_URL
         fromService:
           type: redis
@@ -46,15 +48,64 @@ services:
           name: nexus-chat-redis
           property: connectionString
 
-  # PostgreSQL Database
-  - type: pserv
-    name: nexus-chat-db
+  # Celery Worker
+  - type: worker
+    name: nexus-chat-celery
+    env: docker
+    plan: free
+    repo: https://github.com/YaaBaby/nexus-portfolio.git
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: nexus-chat-backend
+          envVarKey: SECRET_KEY
+      - key: DEBUG
+        value: false
+      - key: DB_NAME
+        fromDatabase:
+          name: nexus-chat-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: nexus-chat-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nexus-chat-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: nexus-chat-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: nexus-chat-db
+          property: port
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: nexus-chat-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: nexus-chat-redis
+          property: connectionString
+
+databases:
+  - name: nexus-chat-db
     plan: free
     databaseName: nexus_chat
     user: nexus_user
-    password: nexus_password
 
+services:
   # Redis for Celery
   - type: redis
     name: nexus-chat-redis
     plan: free
+    maxmemoryPolicy: noeviction
