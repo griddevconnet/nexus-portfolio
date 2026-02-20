@@ -97,15 +97,14 @@ services:
           name: nexus-chat-redis
           property: connectionString
 
-databases:
-  - name: nexus-chat-db
-    plan: free
-    databaseName: nexus_chat
-    user: nexus_user
-
-services:
   # Redis for Celery
   - type: redis
     name: nexus-chat-redis
     plan: free
     maxmemoryPolicy: noeviction
+
+databases:
+  - name: nexus-chat-db
+    plan: free
+    databaseName: nexus_chat
+    user: nexus_user
