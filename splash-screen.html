@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desmond Amedzie — Portfolio</title>
+<link rel="icon" type="image/png" href="public/nexus-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #050810;
+    --accent: #00f5d4;
+    --accent2: #7b2fff;
+    --accent3: #ff6b35;
+    --text: #e8eaf0;
+    --muted: #5a6475;
+    --border: rgba(0,245,212,0.12);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    cursor: none;
+  }
+
+  /* ── Particle Canvas ── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Noise grain overlay (matches portfolio) ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 200;
+    opacity: .35;
+  }
+
+  /* ── Custom cursor ── */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, opacity .2s;
+    box-shadow: 0 0 12px var(--accent), 0 0 4px var(--accent);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(0,245,212,0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width .15s ease, height .15s ease;
+  }
+  @media (hover: none) { .cursor, .cursor-ring { display: none; } }
+
+  /* ══════════════════════════════════
+     SPLASH SCREEN
+  ══════════════════════════════════ */
+  #splash {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    background: var(--bg);
+    /* Splash fades out at the end */
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  #splash.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* ── Ambient glows behind content ── */
+  .splash-glow-teal {
+    position: absolute;
+    width: clamp(300px, 50vw, 600px);
+    height: clamp(300px, 50vw, 600px);
+    background: radial-gradient(circle, rgba(0,245,212,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+  .splash-glow-purple {
+    position: absolute;
+    width: clamp(200px, 35vw, 450px);
+    height: clamp(200px, 35vw, 450px);
+    background: radial-gradient(circle, rgba(123,47,255,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    top: 60%; left: 55%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: glowPulse 4s 1s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  /* ── Corner brackets ── */
+  .corner {
+    position: absolute;
+    width: clamp(20px, 4vw, 32px);
+    height: clamp(20px, 4vw, 32px);
+    opacity: 0;
+    animation: cornerFadeIn 0.6s 0.3s ease forwards;
+  }
+  .corner::before, .corner::after {
+    content: '';
+    position: absolute;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+  .corner::before { width: 100%; height: 1.5px; }
+  .corner::after  { width: 1.5px; height: 100%; }
+  .corner.tl { top: clamp(16px, 3vw, 28px); left: clamp(16px, 3vw, 28px); }
+  .corner.tr { top: clamp(16px, 3vw, 28px); right: clamp(16px, 3vw, 28px); transform: scaleX(-1); }
+  .corner.bl { bottom: clamp(16px, 3vw, 28px); left: clamp(16px, 3vw, 28px); transform: scaleY(-1); }
+  .corner.br { bottom: clamp(16px, 3vw, 28px); right: clamp(16px, 3vw, 28px); transform: scale(-1); }
+  @keyframes cornerFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── Logo wrapper ── */
+  .splash-logo-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(18px, 3.5vw, 28px);
+    z-index: 1;
+  }
+
+  /* Outer orbit ring around logo */
+  .logo-ring-outer {
+    position: absolute;
+    width: clamp(140px, 24vw, 200px);
+    height: clamp(140px, 24vw, 200px);
+    border-radius: 50%;
+    border: 1px dashed rgba(0,245,212,0.18);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spinRing 10s linear infinite;
+    pointer-events: none;
+  }
+  .logo-ring-outer::before {
+    content: '';
+    position: absolute;
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    top: -3.5px; left: 50%;
+    margin-left: -3.5px;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .logo-ring-inner {
+    position: absolute;
+    width: clamp(110px, 18vw, 155px);
+    height: clamp(110px, 18vw, 155px);
+    border-radius: 50%;
+    border: 1px dashed rgba(123,47,255,0.2);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: spinRing 7s linear infinite reverse;
+    pointer-events: none;
+  }
+  .logo-ring-inner::before {
+    content: '';
+    position: absolute;
+    width: 5px; height: 5px;
+    background: var(--accent2);
+    border-radius: 50%;
+    top: -2.5px; left: 50%;
+    margin-left: -2.5px;
+    box-shadow: 0 0 8px var(--accent2);
+  }
+
+  @keyframes spinRing {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* ── Logo image ── */
+  .splash-logo-img-wrap {
+    position: relative;
+    width: clamp(80px, 14vw, 120px);
+    height: clamp(80px, 14vw, 120px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Appear animation */
+    opacity: 0;
+    transform: scale(0.6);
+    animation: logoAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
+  }
+
+  @keyframes logoAppear {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .splash-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0,245,212,0.45)) drop-shadow(0 0 6px rgba(0,245,212,0.3));
+    animation: logoPulse 3s ease-in-out 1.4s infinite;
+  }
+
+  @keyframes logoPulse {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(0,245,212,0.45)) drop-shadow(0 0 6px rgba(0,245,212,0.3)); }
+    50%       { filter: drop-shadow(0 0 35px rgba(0,245,212,0.7)) drop-shadow(0 0 12px rgba(0,245,212,0.5)); }
+  }
+
+  /* ── Brand name ── */
+  .splash-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    background: linear-gradient(120deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.7s ease 1.1s forwards;
+  }
+
+  /* ── Welcome message ── */
+  .splash-welcome-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(6px, 1.5vw, 12px);
+    margin-top: clamp(12px, 2.5vw, 22px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .splash-welcome {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 5vw, 3rem);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    text-align: center;
+    color: var(--text);
+    padding: 0 1rem;
+
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 2s forwards;
+  }
+
+  .splash-welcome .welcome-highlight {
+    background: linear-gradient(120deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Thin divider line that draws in under welcome text */
+  .splash-divider {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    animation: drawLine 0.8s ease 2.65s forwards;
+  }
+
+  @keyframes drawLine {
+    from { width: 0; opacity: 0; }
+    to   { width: clamp(120px, 30vw, 280px); opacity: 1; }
+  }
+
+  .splash-tagline {
+    font-size: clamp(0.58rem, 1.8vw, 0.72rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: center;
+    padding: 0 1rem;
+
+    opacity: 0;
+    animation: fadeUp 0.7s ease 2.8s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Progress bar at bottom ── */
+  .splash-progress-wrap {
+    position: absolute;
+    bottom: clamp(28px, 5vw, 50px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+  }
+
+  .splash-progress-track {
+    width: clamp(100px, 20vw, 180px);
+    height: 1px;
+    background: rgba(0,245,212,0.12);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .splash-progress-bar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 1px;
+    animation: progressFill 3.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards;
+    box-shadow: 0 0 8px rgba(0,245,212,0.5);
+  }
+
+  @keyframes progressFill {
+    0%   { width: 0%; }
+    60%  { width: 65%; }
+    85%  { width: 88%; }
+    100% { width: 100%; }
+  }
+
+  .splash-progress-label {
+    font-size: clamp(0.52rem, 1.3vw, 0.6rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.8s forwards;
+  }
+
+  /* ── Main portfolio content (hidden until splash done) ── */
+  #main-content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease 0.1s, visibility 0.8s ease 0.1s;
+  }
+
+  #main-content.show {
+    opacity: 1;
+    visibility: visible;
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Particle canvas (shared with portfolio) -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ════════════════════════
+     SPLASH SCREEN
+════════════════════════ -->
+<div id="splash">
+
+  <!-- Ambient glows -->
+  <div class="splash-glow-teal"></div>
+  <div class="splash-glow-purple"></div>
+
+  <!-- Corner brackets -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- Logo + brand -->
+  <div class="splash-logo-wrap">
+    <!-- Orbit rings sit absolutely around the logo -->
+    <div class="logo-ring-outer"></div>
+    <div class="logo-ring-inner"></div>
+
+    <!-- Logo image -->
+    <div class="splash-logo-img-wrap">
+      <img
+        src="public/nexus-logo.png"
+        alt="Nexus Logo"
+        class="splash-logo-img"
+        onerror="this.style.display='none'"
+      >
+    </div>
+  </div>
+
+  <!-- Brand name appears below logo -->
+  <div style="margin-top: clamp(10px, 2vw, 18px); position: relative; z-index: 1;">
+    <div class="splash-brand">Nexus</div>
+  </div>
+
+  <!-- Welcome message appears after logo settles -->
+  <div class="splash-welcome-wrap">
+    <div class="splash-welcome">
+      Welcome to my<br>
+      <span class="welcome-highlight">Portfolio</span>
+    </div>
+    <div class="splash-divider"></div>
+    <div class="splash-tagline">Desmond Amedzie &nbsp;·&nbsp; Full-Stack Developer</div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="splash-progress-wrap">
+    <div class="splash-progress-track">
+      <div class="splash-progress-bar"></div>
+    </div>
+    <div class="splash-progress-label">Loading experience...</div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════
+     MAIN CONTENT PLACEHOLDER
+     Replace this with your full portfolio content
+     or redirect to desmond_portfolio.html
+════════════════════════ -->
+<div id="main-content">
+  <!-- Your full portfolio goes here.
+       If you're using this as a separate page, the script below
+       will redirect to desmond_portfolio.html after the splash. -->
+</div>
+
+<script>
+/* ════════════════════
+   PARTICLE BACKGROUND
+   (same as portfolio)
+════════════════════ */
+const canvas = document.getElementById('bg-canvas');
+const ctx    = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const pts = [];
+for (let i = 0; i < 40; i++) {
+  pts.push({
+    x:  Math.random() * window.innerWidth,
+    y:  Math.random() * window.innerHeight,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.25,
+    r:  Math.random() * 1.2 + 0.3,
+    a:  Math.random() * 0.35 + 0.1,
+    c:  Math.random() > 0.5 ? '0,245,212' : '123,47,255'
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  /* Connection lines */
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i + 1; j < pts.length; j++) {
+      const dx = pts[i].x - pts[j].x;
+      const dy = pts[i].y - pts[j].y;
+      const d  = Math.sqrt(dx * dx + dy * dy);
+      if (d < 110) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,245,212,${0.05 * (1 - d / 110)})`;
+        ctx.lineWidth   = 0.4;
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  /* Dots */
+  pts.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;  if (p.x > canvas.width)  p.x = 0;
+    if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.c},${p.a})`;
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ════════════════════
+   CURSOR
+════════════════════ */
+const cursorEl  = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+function animCursor() {
+  rx += (mx - rx) * 0.1;
+  ry += (my - ry) * 0.1;
+  cursorEl.style.left   = mx + 'px';
+  cursorEl.style.top    = my + 'px';
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top  = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+/* ════════════════════
+   SPLASH TIMING
+   Total sequence:
+   0.4s  — logo appears
+   1.1s  — brand name appears
+   2.0s  — welcome text appears
+   2.65s — divider draws
+   2.8s  — tagline appears
+   4.4s  — splash hides, redirect fires
+════════════════════ */
+const SPLASH_DURATION = 4400; // ms
+
+setTimeout(() => {
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+
+  // Mark splash as seen for this session
+  sessionStorage.setItem('splashSeen', 'true');
+
+  // ── OPTION A: If this file IS your portfolio, show #main-content ──
+  // document.getElementById('main-content').classList.add('show');
+
+  // ── OPTION B: Redirect to your portfolio after splash (RECOMMENDED) ──
+  // Change 'index.html' to actual filename if different
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 850); // wait for fade-out transition
+
+}, SPLASH_DURATION);
+</script>
+</body>
+</html>

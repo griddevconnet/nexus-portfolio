@@ -6,6 +6,13 @@
 <title>Desmond Amedzie — Full-Stack Developer</title>
 <link rel="icon" type="image/png" href="public/nexus-logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script>
+// Check if user has already seen splash this session
+if (!sessionStorage.getItem('splashSeen')) {
+  // Redirect to splash screen
+  window.location.href = 'splash-screen.html';
+}
+</script>
 <style>
 :root {
   --bg: #050810;
@@ -180,6 +187,25 @@ footer{border-top:1px solid var(--border);padding:1.5rem 3rem;position:relative;
 .scroll-top{width:36px;height:36px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:none;color:var(--muted);transition:all .3s;font-size:.8rem;text-decoration:none}
 .scroll-top:hover{border-color:var(--accent);color:var(--accent)}
 
+/* ===== HAMBURGER MENU ===== */
+.hamburger{display:none;flex-direction:column;justify-content:space-around;width:20px;height:20px;background:transparent;border:none;cursor:none;z-index:101;position:relative}
+.hamburger span{width:100%;height:1.5px;background:var(--accent);border-radius:2px;transition:all .3s ease;position:relative}
+.hamburger span:nth-child(1){top:0}
+.hamburger span:nth-child(2){top:5px}
+.hamburger span:nth-child(3){top:10px}
+.hamburger.active span:nth-child(1){transform:rotate(45deg);top:5px}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg);top:5px}
+
+.mobile-menu{position:fixed;top:0;right:-100%;width:80vw;max-width:320px;height:100vh;background:rgba(5,8,16,.95);backdrop-filter:blur(20px);border-left:1px solid var(--border);z-index:100;transition:right .3s ease;overflow-y:auto}
+.mobile-menu.active{right:0}
+.mobile-menu-inner{padding:6rem 2rem 2rem}
+.mobile-nav-links{list-style:none;display:flex;flex-direction:column;gap:1rem}
+.mobile-nav-link{display:block;color:var(--text);text-decoration:none;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:1rem 1.5rem;border:1px solid var(--border);border-radius:4px;transition:all .3s ease;position:relative;overflow:hidden}
+.mobile-nav-link::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,245,212,.1),transparent);transition:left .4s ease}
+.mobile-nav-link:hover::before{left:100%}
+.mobile-nav-link:hover{color:var(--accent);border-color:var(--accent);transform:translateX(4px)}
+
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeInRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
@@ -198,6 +224,7 @@ footer{border-top:1px solid var(--border);padding:1.5rem 3rem;position:relative;
 @media(max-width:768px){
   nav{padding:1rem 1.5rem}
   .nav-links{display:none}
+  .hamburger{display:flex}
   #hero{padding:5rem 1.5rem 2rem}
   .hero-inner{grid-template-columns:1fr}
   .hero-visual{display:none}
@@ -206,6 +233,14 @@ footer{border-top:1px solid var(--border);padding:1.5rem 3rem;position:relative;
   #skills,#projects,#achievements,#contact{padding:4rem 1.5rem}
   .contact-grid{grid-template-columns:1fr}
   footer{padding:1.5rem;flex-direction:column;gap:1rem;text-align:center}
+  
+  /* ===== STATS MOBILE RESPONSIVENESS ===== */
+  .stats-bar{padding:1.5rem 1rem}
+  .stats-inner{flex-wrap:wrap;gap:1.5rem;justify-content:center}
+  .stat-item{flex:1 1 calc(50% - 1.5rem);min-width:120px;padding:0.5rem}
+  .stat-num{font-size:1.5rem;line-height:1.2}
+  .stat-label{font-size:0.55rem;margin-top:0.2rem}
+  .stat-divider{display:none}
 }
 
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:200;opacity:.35}
@@ -230,7 +265,25 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
     <li><a href="#achievements">Awards</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-inner">
+    <ul class="mobile-nav-links">
+      <li><a href="#about" class="mobile-nav-link">About</a></li>
+      <li><a href="#skills" class="mobile-nav-link">Skills</a></li>
+      <li><a href="#projects" class="mobile-nav-link">Projects</a></li>
+      <li><a href="#achievements" class="mobile-nav-link">Awards</a></li>
+      <li><a href="#contact" class="mobile-nav-link">Contact</a></li>
+    </ul>
+  </div>
+</div>
 
 <!-- HERO -->
 <section id="hero">
@@ -277,7 +330,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   <div class="stats-inner">
     <div class="stat-item"><span class="stat-num">3+</span><span class="stat-label">Real Projects</span></div>
     <div class="stat-divider"></div>
-    <div class="stat-item"><span class="stat-num">2</span><span class="stat-label">Hackathon Awards</span></div>
+    <div class="stat-item"><span class="stat-num">1</span><span class="stat-label">Hackathon Awards</span></div>
     <div class="stat-divider"></div>
     <div class="stat-item"><span class="stat-num">10+</span><span class="stat-label">Technologies</span></div>
     <div class="stat-divider"></div>
@@ -322,7 +375,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
       <div class="skill-card reveal"><div class="skill-icon">⚡</div><h3>Frontend</h3><div class="skill-tags"><span class="skill-tag">React.js</span><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3</span><span class="skill-tag">Tailwind CSS</span><span class="skill-tag">Bootstrap</span><span class="skill-tag">JavaScript</span></div></div>
       <div class="skill-card reveal"><div class="skill-icon">🔧</div><h3>Backend</h3><div class="skill-tags"><span class="skill-tag">Node.js</span><span class="skill-tag">Django</span><span class="skill-tag">Flask</span><span class="skill-tag">Python</span><span class="skill-tag">RESTful APIs</span><span class="skill-tag">Auth Systems</span></div></div>
       <div class="skill-card reveal"><div class="skill-icon">🗄️</div><h3>Databases &amp; Cloud</h3><div class="skill-tags"><span class="skill-tag">MongoDB Atlas</span><span class="skill-tag">PostgreSQL</span><span class="skill-tag">SQLite</span><span class="skill-tag">Firebase</span><span class="skill-tag">Vercel</span><span class="skill-tag">GitHub</span></div></div>
-      <div class="skill-card reveal"><div class="skill-icon">📱</div><h3>Mobile Development</h3><div class="skill-tags"><span class="skill-tag">React Native</span><span class="skill-tag">Mobile UI Design</span><span class="skill-tag">State Management</span><span class="skill-tag">Role-Based Access</span></div></div>
+      <div class="skill-card reveal"><div class="skill-icon">📱</div><h3>Mobile Development</h3><div class="skill-tags"><span class="skill-tag">React Native</span><span class="skill-tag">Flutter</span><span class="skill-tag">Mobile UI Design</span><span class="skill-tag">State Management</span><span class="skill-tag">Role-Based Access</span></div></div>
       <div class="skill-card reveal"><div class="skill-icon">🤖</div><h3>AI &amp; Automation</h3><div class="skill-tags"><span class="skill-tag">OpenAI API</span><span class="skill-tag">AI Integration</span><span class="skill-tag">Intelligent Monitoring</span><span class="skill-tag">Workflow Automation</span></div></div>
       <div class="skill-card reveal"><div class="skill-icon">🎨</div><h3>Design &amp; Creative</h3><div class="skill-tags"><span class="skill-tag">UI/UX Design</span><span class="skill-tag">Graphic Design</span><span class="skill-tag">Visual Branding</span><span class="skill-tag">Dashboards</span></div></div>
     </div>
@@ -439,6 +492,32 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 
 <script src="router.js"></script>
 <script>
+/* ── HAMBURGER MENU ── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+});
+
+// Close menu when clicking on a link
+mobileNavLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  });
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+  if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('active');
+  }
+});
+
 /* ── CURSOR: fixed, no mix-blend-mode issues ── */
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
