@@ -4,7 +4,7 @@ services:
     name: nexus-chat-backend
     env: docker
     plan: free
-    repo: https://github.com/yourusername/nexus-portfolio.git
+    repo: https://github.com/YaaBaby/nexus-portfolio.git
     rootDir: backend
     dockerfilePath: ./Dockerfile
     dockerContext: .
