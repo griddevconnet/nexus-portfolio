@@ -48,55 +48,6 @@ services:
           name: nexus-chat-redis
           property: connectionString
 
-  # Celery Worker
-  - type: worker
-    name: nexus-chat-celery
-    env: docker
-    plan: free
-    repo: https://github.com/griddevconnet/nexus-portfolio.git
-    rootDir: .
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    autoDeploy: true
-    envVars:
-      - key: SECRET_KEY
-        fromService:
-          type: web
-          name: nexus-chat-backend
-          envVarKey: SECRET_KEY
-      - key: DEBUG
-        value: false
-      - key: DB_NAME
-        fromDatabase:
-          name: nexus-chat-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: nexus-chat-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: nexus-chat-db
-          property: password
-      - key: DB_HOST
-        fromDatabase:
-          name: nexus-chat-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: nexus-chat-db
-          property: port
-      - key: CELERY_BROKER_URL
-        fromService:
-          type: redis
-          name: nexus-chat-redis
-          property: connectionString
-      - key: CELERY_RESULT_BACKEND
-        fromService:
-          type: redis
-          name: nexus-chat-redis
-          property: connectionString
-
   # Redis for Celery
   - type: redis
     name: nexus-chat-redis
