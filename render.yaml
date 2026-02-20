@@ -102,6 +102,7 @@ services:
     name: nexus-chat-redis
     plan: free
     maxmemoryPolicy: noeviction
+    ipAllowList: []
 
 databases:
   - name: nexus-chat-db
