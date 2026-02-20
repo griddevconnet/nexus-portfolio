@@ -1,0 +1,59 @@
+services:
+  # Django Backend Web Service
+  - type: web
+    name: nexus-chat-backend
+    env: docker
+    plan: free
+    repo: https://github.com/yourusername/nexus-portfolio.git
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: nexus-chat-backend.onrender.com
+      - key: DB_NAME
+        fromDatabase:
+          name: nexus-chat-db
+          property: name
+      - key: DB_USER
+        fromDatabase:
+          name: nexus-chat-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nexus-chat-db
+          property: password
+      - key: DB_HOST
+        fromDatabase:
+          name: nexus-chat-db
+          property: host
+      - key: DB_PORT
+        value: 5432
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: nexus-chat-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: nexus-chat-redis
+          property: connectionString
+
+  # PostgreSQL Database
+  - type: pserv
+    name: nexus-chat-db
+    plan: free
+    databaseName: nexus_chat
+    user: nexus_user
+
+  # Redis for Celery
+  - type: redis
+    name: nexus-chat-redis
+    plan: free
