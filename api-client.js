@@ -5,7 +5,7 @@
  * Both the page and API are same-origin → session cookies work perfectly.
  */
 
-const API_BASE_URL = '/api/chat';
+const API_BASE_URL = process.env.RENDER_API_URL ? `${process.env.RENDER_API_URL}/api/chat` : '/api/chat';
 
 class NexusAPI {
   constructor() {
