@@ -52,6 +52,7 @@ services:
     plan: free
     databaseName: nexus_chat
     user: nexus_user
+    password: nexus_password
 
   # Redis for Celery
   - type: redis

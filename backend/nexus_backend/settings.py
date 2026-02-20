@@ -53,20 +53,20 @@ WSGI_APPLICATION = 'nexus_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='nexus_chat'),
+        'USER': config('DB_USER', default='nexus_user'),
+        'PASSWORD': config('DB_PASSWORD', default='nexus_password'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
-# For PostgreSQL (uncomment when ready):
+# For local development with SQLite (uncomment for local testing):
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DB_NAME', default='nexus_chat'),
-#         'USER': config('DB_USER', default='nexus_user'),
-#         'PASSWORD': config('DB_PASSWORD', default='nexus_password'),
-#         'HOST': config('DB_HOST', default='localhost'),
-#         'PORT': config('DB_PORT', default='5432'),
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
 
